@@ -94,19 +94,19 @@ export function KioskLayout({ children, screenName }: KioskLayoutProps) {
       <PromoTicker />
 
       {/* Header */}
-      <header className="relative z-30 flex items-center gap-4 px-4 lg:px-8 py-4 border-b border-[var(--autobacs-border)]">
+      <header className="relative z-30 flex items-center gap-2 md:gap-4 px-3 md:px-4 lg:px-8 py-2 md:py-4 border-b border-[var(--autobacs-border)]">
         <div className="flex items-center gap-3 flex-shrink-0">
           <img
             src="/autobacs-logo.svg"
             alt="Autobacs"
-            className="h-10"
+            className="h-7 md:h-10"
           />
         </div>
 
         <div className="flex-1 min-w-0 flex justify-center">
           {screenName && (
             <h2
-              className="text-base lg:text-lg text-[var(--autobacs-text-muted)] uppercase tracking-wide truncate text-center"
+              className="text-sm md:text-base lg:text-lg text-[var(--autobacs-text-muted)] uppercase tracking-wide truncate text-center"
               style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
             >
               {screenName}
@@ -114,28 +114,28 @@ export function KioskLayout({ children, screenName }: KioskLayoutProps) {
           )}
         </div>
 
-        <div className="flex items-center gap-2 lg:gap-4 text-sm flex-shrink-0">
+        <div className="flex items-center gap-1.5 md:gap-2 lg:gap-4 text-sm flex-shrink-0">
           {/* Recherche directe */}
           <button
             onClick={() => setSearchOpen(true)}
-            className="flex items-center gap-2 px-3 py-2 bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] transition-all"
+            className="flex items-center gap-2 px-2 md:px-3 py-1.5 md:py-2 bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] transition-all"
             style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 700 }}
           >
             <Search size={16} className="text-[var(--autobacs-orange)]" />
-            <span className="hidden md:inline text-xs uppercase tracking-wider text-[var(--autobacs-black)]">Rechercher</span>
+            <span className="hidden lg:inline text-xs uppercase tracking-wider text-[var(--autobacs-black)]">Rechercher</span>
           </button>
 
           {/* Sélecteur de magasin */}
           <div className="relative z-50">
             <button
               onClick={() => setStoreMenuOpen(!storeMenuOpen)}
-              className="relative z-50 flex items-center gap-2 px-4 py-2 bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] transition-all"
+              className="relative z-50 flex items-center gap-1.5 md:gap-2 px-2 md:px-4 py-1.5 md:py-2 bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] transition-all"
             >
-              <MapPin size={16} className="text-[var(--autobacs-orange)]" />
-              <span className="text-[var(--autobacs-black)]" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 700 }}>
+              <MapPin size={14} className="text-[var(--autobacs-orange)]" />
+              <span className="hidden sm:inline text-[var(--autobacs-black)]" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 700 }}>
                 {currentStore?.shortName || 'Magasin'}
               </span>
-              <ChevronDown size={14} className="text-[var(--autobacs-text-muted)]" />
+              <ChevronDown size={12} className="text-[var(--autobacs-text-muted)]" />
             </button>
 
             {storeMenuOpen && (
@@ -165,11 +165,11 @@ export function KioskLayout({ children, screenName }: KioskLayoutProps) {
             )}
           </div>
 
-          <span className="text-[var(--autobacs-black)] font-mono">{currentTime}</span>
+          <span className="hidden md:inline text-[var(--autobacs-black)] font-mono text-sm">{currentTime}</span>
           <button
             onClick={handleFinish}
-            className="px-5 py-2 bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] hover:text-[var(--autobacs-orange)] text-[var(--autobacs-text-muted)] uppercase tracking-wide transition-all"
-            style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 700, fontSize: '0.85rem' }}
+            className="px-2 md:px-5 py-1.5 md:py-2 bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] hover:text-[var(--autobacs-orange)] text-[var(--autobacs-text-muted)] uppercase tracking-wide transition-all"
+            style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 700, fontSize: '0.8rem' }}
           >
             Terminé
           </button>

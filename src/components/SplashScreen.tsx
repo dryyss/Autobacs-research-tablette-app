@@ -1,12 +1,8 @@
 'use client'
 // components/kiosk/SplashScreen.tsx
-// Affiché au démarrage de la tablette — disparaît automatiquement après `duration` ms
-//
-// Usage :
-//   const [ready, setReady] = useState(false)
-//   if (!ready) return <SplashScreen onDone={() => setReady(true)} />
 
 import { useEffect, useState } from 'react'
+import MagarLogoChorale from './MagarLogoChorale'
 
 interface Props {
   onDone: () => void
@@ -21,7 +17,7 @@ const STEPS = [
   'Prêt',
 ]
 
-export default function SplashScreen({ onDone, duration = 1800, centre = 'Herblay' }: Props) {
+export default function SplashScreen({ onDone, duration = 6500, centre = 'Herblay' }: Props) {
   const [step, setStep]         = useState(0)
   const [progress, setProgress] = useState(0)
   const [fading, setFading]     = useState(false)
@@ -117,12 +113,13 @@ export default function SplashScreen({ onDone, duration = 1800, centre = 'Herbla
         {/* Centre logo */}
         <div style={{
           width: 96, height: 96, borderRadius: '50%',
-          background: '#FFFFFF', border: '1px solid rgba(0,0,0,.08)',
+          background: 'rgba(217,120,45,0.07)',
+          border: '1.5px solid rgba(217,120,45,.3)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2,
           animation: 'pulse 2s ease-in-out infinite',
-          boxShadow: '0 4px 20px rgba(217,120,45,0.12)',
+          boxShadow: '0 4px 24px rgba(217,120,45,0.22)',
         }}>
-          <img src="/autobacs-logo.svg" alt="Autobacs" style={{ width: 64, height: 46, objectFit: 'contain' }} />
+          <img src="/autobacs-logo.svg" alt="Autobacs" style={{ width: 74, height: 54, objectFit: 'contain' }} />
         </div>
       </div>
 
@@ -160,22 +157,17 @@ export default function SplashScreen({ onDone, duration = 1800, centre = 'Herbla
         v1.0.0
       </div>
 
-      {/* Logo MAGAR — discret en bas */}
+      {/* Logo MAGAR animé en bas */}
       <div
         style={{
-          position: 'absolute', bottom: 16,
+          position: 'absolute', bottom: 12,
           display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-          opacity: 0.7,
         }}
       >
-        <span style={{ fontSize: 9, letterSpacing: 1.5, color: 'rgba(26,26,26,.45)', textTransform: 'uppercase' }}>
+        <span style={{ fontSize: 9, letterSpacing: 1.5, color: 'rgba(26,26,26,.35)', textTransform: 'uppercase' }}>
           Développé par
         </span>
-        <img
-          src="/colored-logo-magar-dev.svg"
-          alt="MAGAR Développement"
-          style={{ height: 24, width: 'auto', objectFit: 'contain' }}
-        />
+        <MagarLogoChorale size={72} />
       </div>
     </div>
   )
