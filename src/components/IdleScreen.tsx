@@ -234,7 +234,7 @@ export default function IdleScreen({ onWake, centre = 'Herblay', idleAfter = 90_
         <img
           src="/colored-logo-magar-dev.svg"
           alt="MAGAR Développement"
-          style={{ height: 28, width: 'auto', opacity: 0.6 }}
+          style={{ height: 52, width: 'auto', opacity: 0.7 }}
         />
         <div style={{ display: 'flex', gap: 6 }}>
           {[0, .35, .7].map((d, i) => (

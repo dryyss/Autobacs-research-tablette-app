@@ -158,7 +158,7 @@ export default function SplashScreen({ onDone, duration = 6500, centre = 'Herbla
         <img
           src="/colored-logo-magar-dev.svg"
           alt="MAGAR Développement"
-          style={{ height: 30, width: 'auto', objectFit: 'contain', opacity: 0.8 }}
+          style={{ height: 56, width: 'auto', objectFit: 'contain', opacity: 0.85 }}
         />
       </div>
     </div>
