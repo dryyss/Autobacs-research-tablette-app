@@ -1,92 +1,99 @@
-// app/kiosk/loading.tsx
-// Next.js l'affiche automatiquement entre chaque navigation dans /kiosk
-// Aucune configuration nécessaire — colle ce fichier dans app/kiosk/
+// Affiché automatiquement par Next.js entre chaque navigation.
+// Visuel aligné sur SplashScreen pour une expérience cohérente.
 
 export default function KioskLoading() {
   return (
     <div style={{
-      position: 'fixed', inset: 0,
-      background: '#111',
+      position: 'fixed', inset: 0, zIndex: 9999,
+      background: '#FFFFFF',
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',
-      zIndex: 9999,
       fontFamily: 'system-ui, -apple-system, sans-serif',
     }}>
       <style>{`
-        @keyframes spin  { to { transform: rotate(360deg) } }
-        @keyframes bar   { 0%{transform:scaleX(0);opacity:1} 70%{transform:scaleX(1);opacity:1} 90%,100%{transform:scaleX(0);opacity:0} }
-        @keyframes blink { 0%,100%{opacity:.2;transform:scale(.6)} 50%{opacity:1;transform:scale(1)} }
-        @keyframes fade  { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes msg   { 0%,18%{opacity:0;transform:translateY(4px)} 22%,78%{opacity:1;transform:translateY(0)} 82%,100%{opacity:0;transform:translateY(-4px)} }
+        @keyframes spin    { to { transform: rotate(360deg) } }
+        @keyframes pulse   { 0%,100%{opacity:.7;transform:scale(1)} 50%{opacity:1;transform:scale(1.04)} }
+        @keyframes rise    { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes scanSpl { 0%{top:0;opacity:0} 8%{opacity:1} 92%{opacity:1} 100%{top:100%;opacity:0} }
       `}</style>
 
-      {/* Barre de progression top */}
+      {/* Scan line ambiante */}
       <div style={{
-        position: 'absolute', top: 0, left: 0, right: 0, height: 2,
-        background: '#D9782D', transformOrigin: 'left',
-        animation: 'bar 2.4s ease-in-out infinite',
+        position: 'absolute', left: 0, right: 0, height: 1,
+        background: 'rgba(217,120,45,.18)',
+        animation: 'scanSpl 3.5s linear infinite',
       }} />
 
-      {/* Coins décoratifs */}
+      {/* Glow central */}
+      <div style={{
+        position: 'absolute', width: 320, height: 320, borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(217,120,45,0.08), transparent 65%)',
+        pointerEvents: 'none',
+      }} />
+
+      {/* Coins */}
       {([
-        { top: 16, left: 16, borderTop: '1.5px solid rgba(217,120,45,.4)', borderLeft: '1.5px solid rgba(217,120,45,.4)' },
-        { top: 16, right: 16, borderTop: '1.5px solid rgba(217,120,45,.4)', borderRight: '1.5px solid rgba(217,120,45,.4)' },
-        { bottom: 16, left: 16, borderBottom: '1.5px solid rgba(217,120,45,.4)', borderLeft: '1.5px solid rgba(217,120,45,.4)' },
-        { bottom: 16, right: 16, borderBottom: '1.5px solid rgba(217,120,45,.4)', borderRight: '1.5px solid rgba(217,120,45,.4)' },
+        { top: 24, left: 24, borderTop: '1px solid rgba(217,120,45,.5)', borderLeft: '1px solid rgba(217,120,45,.5)' },
+        { top: 24, right: 24, borderTop: '1px solid rgba(217,120,45,.5)', borderRight: '1px solid rgba(217,120,45,.5)' },
+        { bottom: 24, left: 24, borderBottom: '1px solid rgba(217,120,45,.5)', borderLeft: '1px solid rgba(217,120,45,.5)' },
+        { bottom: 24, right: 24, borderBottom: '1px solid rgba(217,120,45,.5)', borderRight: '1px solid rgba(217,120,45,.5)' },
       ] as React.CSSProperties[]).map((s, i) => (
-        <div key={i} style={{ position: 'absolute', width: 18, height: 18, ...s }} />
+        <div key={i} style={{ position: 'absolute', width: 24, height: 24, ...s }} />
       ))}
 
-      {/* Ring animé */}
+      {/* Ring principal */}
       <div style={{
-        position: 'relative', width: 120, height: 120,
+        position: 'relative', width: 200, height: 200,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        marginBottom: 28,
+        marginBottom: 40,
       }}>
-        {/* Cercle de fond */}
-        <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '2px solid rgba(217,120,45,.1)' }} />
-        {/* Ring principal */}
+        <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '1px solid rgba(217,120,45,.18)' }} />
+        <div style={{ position: 'absolute', inset: 10, borderRadius: '50%', border: '1px solid rgba(217,120,45,.12)' }} />
         <div style={{
           position: 'absolute', inset: 0, borderRadius: '50%',
           border: '2px solid transparent',
-          borderTopColor: '#D9782D', borderRightColor: 'rgba(217,120,45,.3)',
-          animation: 'spin 1.1s linear infinite',
+          borderTopColor: '#D9782D', borderRightColor: 'rgba(217,120,45,.4)',
+          animation: 'spin 0.7s linear infinite',
         }} />
-        {/* Ring secondaire inverse */}
         <div style={{
-          position: 'absolute', inset: 12, borderRadius: '50%',
+          position: 'absolute', inset: 16, borderRadius: '50%',
           border: '1px solid transparent',
-          borderTopColor: 'rgba(217,120,45,.35)',
-          animation: 'spin 1.8s linear infinite reverse',
+          borderTopColor: 'rgba(217,120,45,.5)',
+          animation: 'spin 1.1s linear infinite reverse',
         }} />
-        {/* Logo centre */}
+        {/* Centre logo */}
         <div style={{
-          width: 72, height: 72, borderRadius: '50%',
-          background: '#1a1a1a', border: '1px solid rgba(255,255,255,.07)',
+          width: 124, height: 124, borderRadius: '50%',
+          background: 'rgba(217,120,45,0.07)',
+          border: '1.5px solid rgba(217,120,45,.3)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2,
+          animation: 'pulse 1.1s ease-in-out infinite',
+          boxShadow: '0 4px 28px rgba(217,120,45,0.28)',
         }}>
-          <img src="/autobacs-logo.svg" alt="Autobacs" style={{ width: 48, height: 34, objectFit: 'contain' }} />
+          <img src="/autobacs-logo.svg" alt="Autobacs" style={{ width: 96, height: 70, objectFit: 'contain' }} />
         </div>
       </div>
 
-      {/* Texte */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, animation: 'fade .5s ease forwards' }}>
-        <p style={{ color: '#fff', fontSize: 18, fontWeight: 700, margin: 0, letterSpacing: -.3 }}>
+      {/* Titre */}
+      <div style={{ textAlign: 'center', marginBottom: 32, animation: 'rise .6s ease forwards' }}>
+        <p style={{ color: '#1A1A1A', fontSize: 24, fontWeight: 700, margin: 0, letterSpacing: -.5 }}>
           Chargement
         </p>
-        <p style={{ color: 'rgba(255,255,255,.7)', fontSize: 13, margin: 0, letterSpacing: .5, fontWeight: 500 }}>
+        <p style={{ color: 'rgba(26,26,26,.6)', fontSize: 14, margin: '8px 0 0', letterSpacing: .5, fontWeight: 500 }}>
           Veuillez patienter...
         </p>
       </div>
 
-      {/* Dots */}
-      <div style={{ display: 'flex', gap: 6, marginTop: 18 }}>
-        {[0, .2, .4].map((delay, i) => (
-          <div key={i} style={{
-            width: 6, height: 6, borderRadius: '50%', background: '#D9782D',
-            animation: `blink 1.4s ease-in-out ${delay}s infinite`,
-          }} />
-        ))}
+      {/* Logo MAGAR en bas */}
+      <div style={{
+        position: 'absolute', bottom: 14,
+        animation: 'rise 1s ease 1.5s both',
+      }}>
+        <img
+          src="/colored-logo-magar-dev.svg"
+          alt="MAGAR Développement"
+          style={{ height: 56, width: 'auto', objectFit: 'contain', opacity: 0.85 }}
+        />
       </div>
     </div>
   )

@@ -1,22 +1,31 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { KioskLayout } from '@/components/KioskLayout';
-import { products, getProductStock, getOtherStoresWithStock, getProductImage } from '@/data/mockData';
+import { products, getProductStock, getOtherStoresWithStock, getProductImage, getLoyaltyPrice } from '@/data/mockData';
 import { useKiosk } from '@/context/KioskContext';
-import { Car, MapPin, ShoppingBag, ArrowLeft, Home, Clock, Navigation, Scale } from 'lucide-react';
+import { Car, MapPin, ShoppingBag, ArrowLeft, Home, Clock, Navigation, Scale, ChevronLeft, ChevronRight } from 'lucide-react';
 import Barcode from '@/components/Barcode';
 
 export default function ProductDetailPage() {
   const { productId } = useParams<{ productId: string }>();
   const router = useRouter();
   const { plate, vehicle, storeId, compareIds, toggleCompare, trackViewed } = useKiosk();
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (productId) trackViewed(productId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId]);
+
+  const scrollCarousel = (dir: 'prev' | 'next') => {
+    const el = carouselRef.current;
+    if (!el) return;
+    // Défile par la largeur visible (≈ 4 cartes sur md, 2 en dessous)
+    const amount = el.clientWidth * 0.85 * (dir === 'next' ? 1 : -1);
+    el.scrollBy({ left: amount, behavior: 'smooth' });
+  };
 
   const product = products.find((p) => p.id === productId);
   if (!product) {
@@ -61,11 +70,11 @@ export default function ProductDetailPage() {
   // Seed stable sur le productId → le même produit affiche toujours les mêmes suggestions.
   const alsoViewed = products
     .filter((p) => p.id !== product.id && p.subcriteriaId === product.subcriteriaId)
-    .slice(0, 4);
+    .slice(0, 8);
 
   return (
     <KioskLayout screenName="Fiche produit">
-      <div className="h-full flex flex-col px-8 py-5 overflow-hidden">
+      <div className="h-full flex flex-col px-3 sm:px-6 md:px-8 py-3 sm:py-5 overflow-hidden">
         {/* Top bar */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
@@ -124,8 +133,8 @@ export default function ProductDetailPage() {
         <div className="flex-1 max-w-3xl mx-auto w-full min-h-0">
           <div className="flex flex-col overflow-auto pr-2 h-full">
             {/* En-tête avec photo produit compacte + brand/nom/ref */}
-            <div className="flex items-start gap-4 mb-3">
-              <div className="flex-shrink-0 w-32 h-32 md:w-40 md:h-40 bg-[var(--autobacs-dark-bg)] border border-[var(--autobacs-border)] flex items-center justify-center p-4">
+            <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 mb-3">
+              <div className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 mx-auto sm:mx-0 bg-[var(--autobacs-dark-bg)] border border-[var(--autobacs-border)] flex items-center justify-center p-3 sm:p-4">
                 <img
                   src={getProductImage(product.id)}
                   alt={product.name}
@@ -160,7 +169,7 @@ export default function ProductDetailPage() {
             </p>
 
             {/* Price (avec promo si applicable) */}
-            <div className="flex items-baseline gap-3 mb-4">
+            <div className="flex items-baseline gap-3 mb-2">
               {product.promoPrice != null ? (
                 <>
                   <span
@@ -191,6 +200,31 @@ export default function ProductDetailPage() {
                 </span>
               )}
             </div>
+
+            {/* Prix carte fidélité — affiché uniquement si pas déjà en promo */}
+            {(() => {
+              const loyaltyPrice = getLoyaltyPrice(product);
+              if (loyaltyPrice == null) return null;
+              return (
+                <div className="mb-4 inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--autobacs-orange)]/10 border border-[var(--autobacs-orange)]/40 self-start">
+                  <span
+                    className="text-[10px] uppercase tracking-wider text-[var(--autobacs-orange)] font-bold"
+                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
+                  >
+                    Autobacs Card
+                  </span>
+                  <span
+                    className="text-base text-[var(--autobacs-orange)]"
+                    style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 900 }}
+                  >
+                    {loyaltyPrice.toFixed(2)} €
+                  </span>
+                  <span className="text-[10px] text-[var(--autobacs-text-muted)]">
+                    avec votre carte fidélité (−5 %)
+                  </span>
+                </div>
+              );
+            })()}
 
             {/* Expert advice block */}
             <div className="mb-4 bg-[var(--autobacs-card-bg)] border-l-4 border-[var(--autobacs-orange)] p-4">
@@ -364,21 +398,43 @@ export default function ProductDetailPage() {
               )}
             </div>
 
-            {/* Suggestions — aussi consultés dans la même sous-catégorie */}
+            {/* Suggestions — carousel "aussi consultés" dans la même sous-catégorie */}
             {alsoViewed.length > 0 && (
               <div className="mt-6 pt-4 border-t border-[var(--autobacs-border)]">
-                <h3
-                  className="text-sm mb-3 uppercase tracking-wide text-[var(--autobacs-text-muted)]"
-                  style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 700 }}
+                <div className="flex items-center justify-between mb-3">
+                  <h3
+                    className="text-sm uppercase tracking-wide text-[var(--autobacs-text-muted)]"
+                    style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 700 }}
+                  >
+                    Ces clients ont aussi consulté
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => scrollCarousel('prev')}
+                      className="w-8 h-8 flex items-center justify-center bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] hover:text-[var(--autobacs-orange)] transition-all"
+                      aria-label="Précédent"
+                    >
+                      <ChevronLeft size={16} />
+                    </button>
+                    <button
+                      onClick={() => scrollCarousel('next')}
+                      className="w-8 h-8 flex items-center justify-center bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] hover:text-[var(--autobacs-orange)] transition-all"
+                      aria-label="Suivant"
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                </div>
+                <div
+                  ref={carouselRef}
+                  className="flex gap-2 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2"
+                  style={{ scrollbarWidth: 'thin' }}
                 >
-                  Ces clients ont aussi consulté
-                </h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                   {alsoViewed.map((p) => (
                     <button
                       key={p.id}
                       onClick={() => router.push(`/product/${p.id}`)}
-                      className="flex flex-col bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] p-2 transition-all text-left"
+                      className="flex-shrink-0 w-1/2 md:w-1/4 snap-start flex flex-col bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] p-2 transition-all text-left"
                     >
                       <div className="w-full h-20 flex items-center justify-center bg-[var(--autobacs-dark-bg)] p-1 mb-2">
                         <img src={getProductImage(p.id)} alt={p.name} className="max-w-full max-h-full object-contain" />

@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { KioskLayout } from '@/components/KioskLayout';
 import { useKiosk } from '@/context/KioskContext';
-import { products, getProductStock, getProductImage } from '@/data/mockData';
+import { products, getProductStock, getProductImage, getLoyaltyPrice } from '@/data/mockData';
 import { ArrowLeft, Home, X, Check } from 'lucide-react';
 
 export default function ComparePage() {
@@ -162,6 +162,18 @@ export default function ComparePage() {
                         <Check size={12} /> Meilleur prix
                       </span>
                     )}
+                    {(() => {
+                      const lp = getLoyaltyPrice(p);
+                      if (lp == null) return null;
+                      return (
+                        <span
+                          className="mt-1 text-[10px] uppercase tracking-wider text-[var(--autobacs-orange)] font-bold"
+                          style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
+                        >
+                          Card · {lp.toFixed(2)} €
+                        </span>
+                      );
+                    })()}
                   </div>
                 </CompareCell>
 

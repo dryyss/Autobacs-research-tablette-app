@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { KioskLayout } from '@/components/KioskLayout';
-import { categories, getSubcriteriaForCategory, getProductsForSubcriteria } from '@/data/mockData';
+import { categories, getSubcriteriaForCategory, getProductsForSubcriteria, isProductCompatibleWithVehicle, type VehicleInfo } from '@/data/mockData';
 import { useKiosk } from '@/context/KioskContext';
 import {
   Car, ArrowLeft, Circle, List,
@@ -59,6 +59,11 @@ export default function SubcriteriaPage() {
   const category = categories.find((c) => c.id === selectedCategory);
   const subcriteria = selectedCategory ? getSubcriteriaForCategory(selectedCategory) : [];
 
+  // Si plaque identifiée, on ne compte que les produits compatibles avec ce véhicule
+  const vInfo: VehicleInfo | null = vehicle?.brand
+    ? { brand: vehicle.brand, model: vehicle.model, fuelType: vehicle.fuelType, year: vehicle.year }
+    : null;
+
   const handleSubcriteriaClick = (subcriteriaId: string) => {
     setSelectedSubcriteria(subcriteriaId);
     router.push('/results');
@@ -88,7 +93,7 @@ export default function SubcriteriaPage() {
 
   return (
     <KioskLayout screenName={category.name}>
-      <div className="h-full flex flex-col px-8 py-6 overflow-hidden">
+      <div className="h-full flex flex-col px-3 sm:px-6 md:px-8 py-3 sm:py-6 overflow-hidden">
         {/* Top bar */}
         <div className="flex items-center justify-between mb-4">
           <button
@@ -137,9 +142,13 @@ export default function SubcriteriaPage() {
         </div>
 
         {/* Sub-criteria grid 3x2 */}
-        <div className="flex-1 grid grid-cols-3 grid-rows-2 gap-5 max-w-6xl mx-auto w-full">
+        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-5 max-w-6xl mx-auto w-full overflow-y-auto">
           {subcriteria.map((sc, index) => {
-            const productCount = getProductsForSubcriteria(sc.id).length;
+            const allProducts = getProductsForSubcriteria(sc.id);
+            // Si plaque, on ne compte que les produits compatibles avec le véhicule
+            const productCount = vInfo
+              ? allProducts.filter((p) => isProductCompatibleWithVehicle(p.id, vInfo)).length
+              : allProducts.length;
             return (
               <button
                 key={sc.id}

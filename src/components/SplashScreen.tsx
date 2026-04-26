@@ -15,7 +15,7 @@ const STEPS = [
   'Prêt',
 ]
 
-export default function SplashScreen({ onDone, duration = 6500, centre = 'Herblay' }: Props) {
+export default function SplashScreen({ onDone, duration = 2200, centre = 'Herblay' }: Props) {
   const [step, setStep]         = useState(0)
   const [progress, setProgress] = useState(0)
   const [fading, setFading]     = useState(false)
@@ -59,7 +59,7 @@ export default function SplashScreen({ onDone, duration = 6500, centre = 'Herbla
     }}>
       <style>{`
         @keyframes spin    { to { transform: rotate(360deg) } }
-        @keyframes pulse   { 0%,100%{opacity:.6} 50%{opacity:1} }
+        @keyframes pulse   { 0%,100%{opacity:.7;transform:scale(1)} 50%{opacity:1;transform:scale(1.04)} }
         @keyframes rise    { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
         @keyframes scanSpl { 0%{top:0;opacity:0} 8%{opacity:1} 92%{opacity:1} 100%{top:100%;opacity:0} }
       `}</style>
@@ -90,34 +90,34 @@ export default function SplashScreen({ onDone, duration = 6500, centre = 'Herbla
 
       {/* Ring principal */}
       <div style={{
-        position: 'relative', width: 160, height: 160,
+        position: 'relative', width: 200, height: 200,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         marginBottom: 40,
       }}>
         <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '1px solid rgba(217,120,45,.18)' }} />
-        <div style={{ position: 'absolute', inset: 8, borderRadius: '50%', border: '1px solid rgba(217,120,45,.12)' }} />
+        <div style={{ position: 'absolute', inset: 10, borderRadius: '50%', border: '1px solid rgba(217,120,45,.12)' }} />
         <div style={{
           position: 'absolute', inset: 0, borderRadius: '50%',
           border: '2px solid transparent',
           borderTopColor: '#D9782D', borderRightColor: 'rgba(217,120,45,.4)',
-          animation: 'spin 1.2s linear infinite',
+          animation: 'spin 0.7s linear infinite',
         }} />
         <div style={{
-          position: 'absolute', inset: 14, borderRadius: '50%',
+          position: 'absolute', inset: 16, borderRadius: '50%',
           border: '1px solid transparent',
           borderTopColor: 'rgba(217,120,45,.5)',
-          animation: 'spin 2s linear infinite reverse',
+          animation: 'spin 1.1s linear infinite reverse',
         }} />
         {/* Centre logo */}
         <div style={{
-          width: 96, height: 96, borderRadius: '50%',
+          width: 124, height: 124, borderRadius: '50%',
           background: 'rgba(217,120,45,0.07)',
           border: '1.5px solid rgba(217,120,45,.3)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2,
-          animation: 'pulse 2s ease-in-out infinite',
-          boxShadow: '0 4px 24px rgba(217,120,45,0.22)',
+          animation: 'pulse 1.1s ease-in-out infinite',
+          boxShadow: '0 4px 28px rgba(217,120,45,0.28)',
         }}>
-          <img src="/autobacs-logo.svg" alt="Autobacs" style={{ width: 74, height: 54, objectFit: 'contain' }} />
+          <img src="/autobacs-logo.svg" alt="Autobacs" style={{ width: 96, height: 70, objectFit: 'contain' }} />
         </div>
       </div>
 

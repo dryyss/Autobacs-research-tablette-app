@@ -1186,6 +1186,19 @@ export function getProductById(id: string): Product | undefined {
   return productById.get(id);
 }
 
+// ─── Carte fidélité Autobacs Card ──────────────────────────────────────
+
+/** Pourcentage de remise carte fidélité (par défaut 5 %) — appliqué sur les
+ *  produits qui ne sont pas déjà en promo. Ne se cumule jamais avec une promo. */
+export const LOYALTY_DISCOUNT_RATE = 0.05;
+
+/** Retourne le prix avec carte fidélité, ou null si non applicable
+ *  (produit déjà en promo → on garde la promo, pas de cumul). */
+export function getLoyaltyPrice(product: Product): number | null {
+  if (product.promoPrice != null) return null;
+  return Math.round(product.price * (1 - LOYALTY_DISCOUNT_RATE) * 100) / 100;
+}
+
 // ─── Promotions d\u2019accueil ─────────────────────────────
 
 export const promoCards: PromoCard[] = [

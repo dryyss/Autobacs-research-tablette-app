@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { KioskLayout } from '@/components/KioskLayout';
 import {
@@ -11,12 +11,13 @@ import {
   getProductsForSubcriteria,
   isProductCompatibleWithVehicle,
   getProductImage,
+  getLoyaltyPrice,
   type VehicleInfo,
 } from '@/data/mockData';
 import { useKiosk } from '@/context/KioskContext';
 import { Car, ArrowLeft, ChevronLeft, ChevronRight, CheckCircle2, Scale } from 'lucide-react';
 
-type FilterTab = 'all' | 'in-stock' | 'equivalents' | 'other-stores';
+type FilterTab = 'all' | 'in-stock' | 'promo' | 'equivalents' | 'other-stores';
 type SortBy = 'default' | 'brand' | 'price-asc' | 'price-desc';
 
 const PRODUCTS_PER_PAGE = 4;
@@ -27,6 +28,41 @@ export default function ResultsPage() {
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
   const [sortBy, setSortBy] = useState<SortBy>('default');
   const [page, setPage] = useState(0);
+  const [slideDir, setSlideDir] = useState<'next' | 'prev' | null>(null);
+
+  // Refs pour le swipe tactile sur la grille produits
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
+
+  const goPrev = () => {
+    if (page <= 0) return;
+    setSlideDir('prev');
+    setPage((p) => p - 1);
+    setTimeout(() => setSlideDir(null), 300);
+  };
+  const goNext = () => {
+    if (page >= totalPagesRef.current - 1) return;
+    setSlideDir('next');
+    setPage((p) => p + 1);
+    setTimeout(() => setSlideDir(null), 300);
+  };
+  // Ref pour accéder à totalPages dans goNext sans dépendances cycliques
+  const totalPagesRef = useRef(1);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    touchStart.current = { x: t.clientX, y: t.clientY };
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (!touchStart.current) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touchStart.current.x;
+    const dy = t.clientY - touchStart.current.y;
+    touchStart.current = null;
+    // On ne bascule de page que si le swipe horizontal est dominant + suffisamment long
+    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+    if (dx < 0) goNext();
+    else goPrev();
+  };
 
   const category = categories.find((c) => c.id === selectedCategory);
   const subcriterion = subcriteria.find((sc) => sc.id === selectedSubcriteria);
@@ -68,6 +104,9 @@ export default function ResultsPage() {
           return stock.status === 'in-stock' || stock.status === 'last-unit';
         });
         break;
+      case 'promo':
+        list = list.filter((p) => p.promoPrice != null);
+        break;
       case 'equivalents':
         // Produits qui ont des équivalents
         list = list.filter((p) => p.equivalentIds && p.equivalentIds.length > 0);
@@ -98,6 +137,7 @@ export default function ResultsPage() {
   }, [baseProducts, activeFilter, sortBy, storeId]);
 
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE));
+  totalPagesRef.current = totalPages;
   const currentPageProducts = filteredProducts.slice(
     page * PRODUCTS_PER_PAGE,
     (page + 1) * PRODUCTS_PER_PAGE
@@ -132,7 +172,7 @@ export default function ResultsPage() {
 
   return (
     <KioskLayout screenName={screenName}>
-      <div className="h-full flex flex-col px-8 py-5 overflow-hidden">
+      <div className="h-full flex flex-col px-3 sm:px-6 md:px-8 py-3 sm:py-5 overflow-hidden">
         {/* Top bar */}
         <div className="flex items-center justify-between mb-4">
           <button
@@ -177,24 +217,25 @@ export default function ResultsPage() {
           </div>
         )}
 
-        {/* Filters + Sort */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex gap-2">
+        {/* Filters + Sort — barre scrollable sur mobile, en ligne sur md+ */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+          <div className="flex gap-2 overflow-x-auto pb-1 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0">
             {[
               { id: 'all', label: 'Tous' },
-              { id: 'in-stock', label: 'En stock ici' },
+              { id: 'in-stock', label: 'En stock' },
+              { id: 'promo', label: 'Promo' },
               { id: 'equivalents', label: 'Équivalents' },
               { id: 'other-stores', label: 'Autres centres' },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => handleFilterChange(tab.id as FilterTab)}
-                className={`px-5 py-2 uppercase tracking-wide transition-all ${
+                className={`flex-shrink-0 px-3 sm:px-5 py-2 uppercase tracking-wide transition-all whitespace-nowrap ${
                   activeFilter === tab.id
                     ? 'bg-[var(--autobacs-orange)] text-white'
                     : 'bg-[var(--autobacs-card-bg)] text-[var(--autobacs-text-muted)] hover:text-[var(--autobacs-black)]'
                 }`}
-                style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 700, fontSize: '0.9rem', minHeight: '44px' }}
+                style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 700, fontSize: '0.85rem', minHeight: '40px' }}
               >
                 {tab.label}
               </button>
@@ -204,7 +245,7 @@ export default function ResultsPage() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortBy)}
-            className="bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] text-[var(--autobacs-black)] px-4 py-2 text-sm uppercase tracking-wide"
+            className="bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] text-[var(--autobacs-black)] px-3 sm:px-4 py-2 text-xs sm:text-sm uppercase tracking-wide flex-shrink-0"
             style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 700 }}
           >
             <option value="default">Tri : Par défaut</option>
@@ -214,14 +255,23 @@ export default function ResultsPage() {
           </select>
         </div>
 
-        {/* Product grid 2x2 */}
-        <div className="flex-1 min-h-0">
+        {/* Product grid 2x2 — swipe gauche/droite pour changer de page */}
+        <div
+          className="flex-1 min-h-0 touch-pan-y"
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+        >
           {currentPageProducts.length === 0 ? (
             <div className="h-full flex items-center justify-center">
               <p className="text-xl text-[var(--autobacs-text-muted)]">Aucun produit trouvé pour ce filtre</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 md:grid-rows-2 gap-3 md:gap-4 h-full auto-rows-fr">
+            <div
+              key={page}
+              className={`grid grid-cols-1 md:grid-cols-2 md:grid-rows-2 gap-3 md:gap-4 h-full auto-rows-fr ${
+                slideDir === 'next' ? 'page-slide-in-right' : slideDir === 'prev' ? 'page-slide-in-left' : ''
+              }`}
+            >
               {currentPageProducts.map((product) => {
                 const badge = getStockBadge(product.id);
                 const isComparing = compareIds.includes(product.id);
@@ -280,30 +330,44 @@ export default function ResultsPage() {
                         {product.expertAdvice}
                       </p>
 
-                      <div className="mt-auto flex items-center justify-between gap-2">
-                        {product.promoPrice != null ? (
-                          <div className="flex items-baseline gap-2">
-                            <span
+                      <div className="mt-auto flex items-end justify-between gap-2">
+                        <div className="flex flex-col">
+                          {product.promoPrice != null ? (
+                            <div className="flex items-baseline gap-2">
+                              <span
+                                className="text-3xl text-[var(--autobacs-orange)]"
+                                style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 900 }}
+                              >
+                                {product.promoPrice.toFixed(2)} €
+                              </span>
+                              <span
+                                className="text-sm text-[var(--autobacs-text-muted)] line-through"
+                                style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 700 }}
+                              >
+                                {product.price.toFixed(2)} €
+                              </span>
+                            </div>
+                          ) : (
+                            <div
                               className="text-3xl text-[var(--autobacs-orange)]"
                               style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 900 }}
                             >
-                              {product.promoPrice.toFixed(2)} €
-                            </span>
-                            <span
-                              className="text-sm text-[var(--autobacs-text-muted)] line-through"
-                              style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 700 }}
-                            >
                               {product.price.toFixed(2)} €
-                            </span>
-                          </div>
-                        ) : (
-                          <div
-                            className="text-3xl text-[var(--autobacs-orange)]"
-                            style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 900 }}
-                          >
-                            {product.price.toFixed(2)} €
-                          </div>
-                        )}
+                            </div>
+                          )}
+                          {(() => {
+                            const lp = getLoyaltyPrice(product);
+                            if (lp == null) return null;
+                            return (
+                              <div
+                                className="text-[10px] mt-0.5 text-[var(--autobacs-orange)] uppercase tracking-wider"
+                                style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 700 }}
+                              >
+                                Autobacs Card · {lp.toFixed(2)} €
+                              </div>
+                            );
+                          })()}
+                        </div>
                         <div className="text-[10px] text-[var(--autobacs-text-muted)] uppercase tracking-wider">
                           Réf. {product.reference}
                         </div>
@@ -335,7 +399,7 @@ export default function ResultsPage() {
         {filteredProducts.length > 0 && (
           <div className="flex items-center justify-center gap-4 mt-4">
             <button
-              onClick={() => setPage(Math.max(0, page - 1))}
+              onClick={goPrev}
               disabled={page === 0}
               className="w-12 h-12 flex items-center justify-center bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] disabled:opacity-30 transition-all"
             >
@@ -346,9 +410,12 @@ export default function ResultsPage() {
               style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 700 }}
             >
               Page {page + 1} / {totalPages} · {filteredProducts.length} produit{filteredProducts.length > 1 ? 's' : ''}
+              {totalPages > 1 && (
+                <span className="hidden md:inline ml-2 text-[10px] opacity-60">· glissez pour naviguer</span>
+              )}
             </div>
             <button
-              onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
+              onClick={goNext}
               disabled={page >= totalPages - 1}
               className="w-12 h-12 flex items-center justify-center bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] disabled:opacity-30 transition-all"
             >

@@ -17,7 +17,7 @@ export default function CategoriesPage() {
 
   return (
     <KioskLayout screenName="Sélection catégorie">
-      <div className="h-full flex flex-col px-8 py-6 overflow-hidden">
+      <div className="h-full flex flex-col px-3 sm:px-6 md:px-8 py-3 sm:py-6 overflow-hidden">
         {/* Top bar */}
         <div className="flex items-center justify-between mb-4">
           <button
@@ -55,7 +55,7 @@ export default function CategoriesPage() {
         </div>
 
         {/* Category grid 5x2 */}
-        <div className="flex-1 grid grid-cols-5 grid-rows-2 gap-4 max-w-[1400px] mx-auto w-full">
+        <div className="flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 max-w-[1400px] mx-auto w-full overflow-y-auto">
           {categories.map((category) => {
             const count = countProductsInCategory(category.id);
             return (

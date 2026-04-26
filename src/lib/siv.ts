@@ -84,7 +84,10 @@ async function identifyMock(plate: string): Promise<SivResult> {
   const delay = 400 + Math.random() * 500;
   await new Promise((resolve) => setTimeout(resolve, delay));
 
-  if (Math.random() < 0.03) {
+  // Timeout aléatoire désactivé par défaut en démo. Activable via env pour QA :
+  //   NEXT_PUBLIC_SIV_MOCK_TIMEOUT_RATE=0.03
+  const timeoutRate = Number(process.env.NEXT_PUBLIC_SIV_MOCK_TIMEOUT_RATE ?? '0');
+  if (timeoutRate > 0 && Math.random() < timeoutRate) {
     return { success: false, error: 'TIMEOUT' };
   }
 

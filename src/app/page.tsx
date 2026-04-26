@@ -509,7 +509,10 @@ export default function HomePage() {
       </div>
 
       {/* ══════════ BOTTOM : Hero carousel bannières officielles Autobacs ══════════ */}
-      <HeroCarousel />
+      {/* Masqué sur mobile/petite tablette pour ne pas chevaucher le bouton RECHERCHER */}
+      <div className="hidden md:block">
+        <HeroCarousel />
+      </div>
 
       {/* ══════════ BOTTOM : Bandeau promo (visible quand le bloc latéral est masqué) ══════════ */}
       <div

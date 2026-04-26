@@ -105,7 +105,7 @@ export default function IdleScreen({ onWake, centre = 'Herblay', idleAfter = 90_
         @keyframes scanIdle   { 0%{top:0;opacity:0} 5%{opacity:1} 95%{opacity:1} 100%{top:100%;opacity:0} }
         @keyframes pulseIdle  { 0%,100%{opacity:.4} 50%{opacity:1} }
         @keyframes glowIdle   { 0%,100%{opacity:.25} 50%{opacity:.55} }
-        @keyframes ctaPulse   { 0%,100%{opacity:.3} 50%{opacity:.7} }
+        @keyframes ctaPulse   { 0%,100%{opacity:.75} 50%{opacity:1} }
       `}</style>
 
       {/* Scan line */}
@@ -219,14 +219,19 @@ export default function IdleScreen({ onWake, centre = 'Herblay', idleAfter = 90_
 
       {/* CTA */}
       <div style={{
-        display: 'flex', alignItems: 'center', gap: 10,
-        animation: 'ctaPulse 3s ease-in-out infinite',
+        display: 'flex', alignItems: 'center', gap: 12,
+        animation: 'ctaPulse 2s ease-in-out infinite',
       }}>
-        <div style={{ width: 24, height: 1, background: 'rgba(0,0,0,.12)' }} />
-        <span style={{ color: 'rgba(26,26,26,.4)', fontSize: 11, letterSpacing: 2 }}>
-          TOUCHEZ L'ÉCRAN POUR DÉMARRER
+        <div style={{ width: 32, height: 2, background: '#D9782D' }} />
+        <span style={{
+          color: '#D9782D',
+          fontSize: 15,
+          letterSpacing: 2.5,
+          fontWeight: 700,
+        }}>
+          TOUCHEZ L&apos;ÉCRAN POUR DÉMARRER
         </span>
-        <div style={{ width: 24, height: 1, background: 'rgba(0,0,0,.12)' }} />
+        <div style={{ width: 32, height: 2, background: '#D9782D' }} />
       </div>
 
       {/* Logo MAGAR + dots footer */}

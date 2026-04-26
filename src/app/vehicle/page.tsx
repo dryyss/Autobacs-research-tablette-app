@@ -18,6 +18,14 @@ export default function VehiclePage() {
     router.push('/results');
   };
 
+  // Clic sur une catégorie depuis la fiche véhicule : direct vers /results
+  // filtré par cette catégorie (pas vers la page de sélection /categories).
+  const handleCategoryClick = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    setSelectedSubcriteria(null);
+    router.push('/results');
+  };
+
   if (!vehicle || !plate) {
     return (
       <KioskLayout screenName="Fiche véhicule">
@@ -179,9 +187,7 @@ export default function VehiclePage() {
               {categoriesWithCount.map((cat) => (
                 <button
                   key={cat.id}
-                  onClick={() => {
-                    router.push(`/categories`);
-                  }}
+                  onClick={() => handleCategoryClick(cat.id)}
                   className="stagger-item bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] p-3 flex items-center gap-3 transition-all text-left group"
                 >
                   <div className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-full overflow-hidden bg-[var(--autobacs-dark-bg)] flex items-center justify-center p-1.5">

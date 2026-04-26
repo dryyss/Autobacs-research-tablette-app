@@ -34,7 +34,7 @@ function UnavailableContent() {
 
   return (
     <KioskLayout screenName="Disponibilité produit">
-      <div className="h-full flex flex-col px-8 py-5 overflow-hidden">
+      <div className="h-full flex flex-col px-3 sm:px-6 md:px-8 py-3 sm:py-5 overflow-hidden">
         {/* Top bar */}
         <div className="flex items-center justify-between mb-3">
           <button
@@ -227,10 +227,10 @@ function UnavailableContent() {
                 className="text-xl mb-2"
                 style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 900 }}
               >
-                Pas le temps ?
+                Commandez en ligne
               </h3>
               <p className="text-xs text-[var(--autobacs-text-muted)] mb-4 leading-relaxed">
-                Commandez maintenant, livraison sous 24-48h ou Click &amp; Collect en 2h
+                Depuis votre téléphone, ou directement auprès de nos vendeurs à l’accueil du magasin.
               </p>
               <div className="text-3xl text-[var(--autobacs-orange)] mb-4" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 900 }}>
                 {product.price.toFixed(2)} €
