@@ -231,13 +231,8 @@ export default function IdleScreen({ onWake, centre = 'Herblay', idleAfter = 90_
       </div>
 
       {/* Logo MAGAR + dots footer */}
-      <div style={{ position: 'absolute', bottom: 14, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, opacity: 0.65 }}>
-          <span style={{ fontSize: 8, letterSpacing: 1.5, color: 'rgba(26,26,26,.4)', textTransform: 'uppercase' }}>
-            Développé par
-          </span>
-          <MagarLogoChorale size={60} />
-        </div>
+      <div style={{ position: 'absolute', bottom: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+        <MagarLogoChorale size={60} />
         <div style={{ display: 'flex', gap: 6 }}>
           {[0, .35, .7].map((d, i) => (
             <div key={i} style={{

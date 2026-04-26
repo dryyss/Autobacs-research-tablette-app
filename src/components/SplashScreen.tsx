@@ -158,15 +158,7 @@ export default function SplashScreen({ onDone, duration = 6500, centre = 'Herbla
       </div>
 
       {/* Logo MAGAR animé en bas */}
-      <div
-        style={{
-          position: 'absolute', bottom: 12,
-          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-        }}
-      >
-        <span style={{ fontSize: 9, letterSpacing: 1.5, color: 'rgba(26,26,26,.35)', textTransform: 'uppercase' }}>
-          Développé par
-        </span>
+      <div style={{ position: 'absolute', bottom: 12 }}>
         <MagarLogoChorale size={72} />
       </div>
     </div>
