@@ -172,15 +172,15 @@ export default function HomePage() {
         {/* ══════════ LEFT : Plate keyboard ══════════ */}
         <div className="flex flex-col items-center">
           {/* Headline */}
-          <div className="text-center mb-3 lg:mb-6">
+          <div className="text-center mb-2 md:mb-3 lg:mb-6">
             <h1
-              className="text-3xl lg:text-5xl mb-1 lg:mb-2 tracking-tight"
+              className="text-xl md:text-3xl lg:text-5xl mb-0.5 md:mb-1 lg:mb-2 tracking-tight"
               style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 900 }}
             >
               TROUVEZ VOS{' '}
               <span className="text-[var(--autobacs-orange)]">PIÈCES</span>
             </h1>
-            <p className="text-sm lg:text-base text-[var(--autobacs-text-muted)]">
+            <p className="text-xs md:text-sm lg:text-base text-[var(--autobacs-text-muted)]">
               {globalVehicle
                 ? 'Poursuivez votre recherche ou changez de véhicule'
                 : 'Entrez votre plaque pour identifier votre véhicule'}
@@ -294,14 +294,14 @@ export default function HomePage() {
           </div>
 
           {/* Keyboard — Lettres */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1 md:gap-2">
             {LETTERS_LAYOUT.map((row, rowIndex) => (
-              <div key={rowIndex} className="flex gap-2 justify-center">
+              <div key={rowIndex} className="flex gap-1 md:gap-2 justify-center">
                 {row.map((key) => (
                   <button
                     key={key}
                     onClick={() => handleKeyPress(key)}
-                    className="w-[48px] h-[48px] lg:w-[60px] lg:h-[60px] bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] hover:bg-[var(--autobacs-orange)] active:bg-[var(--autobacs-orange-dark)] transition-all text-lg lg:text-xl font-bold"
+                    className="w-[38px] h-[38px] md:w-[48px] md:h-[48px] lg:w-[60px] lg:h-[60px] bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] hover:bg-[var(--autobacs-orange)] active:bg-[var(--autobacs-orange-dark)] transition-all text-base md:text-lg lg:text-xl font-bold"
                     style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
                   >
                     {key}
@@ -315,12 +315,12 @@ export default function HomePage() {
 
             {/* Chiffres */}
             {NUMBERS_LAYOUT.map((row, rowIndex) => (
-              <div key={`num-${rowIndex}`} className="flex gap-2 justify-center">
+              <div key={`num-${rowIndex}`} className="flex gap-1 md:gap-2 justify-center">
                 {row.map((key) => (
                   <button
                     key={key}
                     onClick={() => handleKeyPress(key)}
-                    className="w-[48px] h-[48px] lg:w-[60px] lg:h-[60px] bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] hover:bg-[var(--autobacs-orange)] active:bg-[var(--autobacs-orange-dark)] transition-all text-lg lg:text-xl font-bold"
+                    className="w-[38px] h-[38px] md:w-[48px] md:h-[48px] lg:w-[60px] lg:h-[60px] bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] hover:bg-[var(--autobacs-orange)] active:bg-[var(--autobacs-orange-dark)] transition-all text-base md:text-lg lg:text-xl font-bold"
                     style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
                   >
                     {key}
@@ -330,26 +330,26 @@ export default function HomePage() {
             ))}
 
             {/* Search + Delete */}
-            <div className="flex gap-3 justify-center mt-1">
+            <div className="flex gap-2 md:gap-3 justify-center mt-1">
               <button
                 onClick={handleSearch}
                 disabled={plate.length < 6}
-                className="flex-1 h-[48px] lg:h-[60px] max-w-[280px] bg-[var(--autobacs-orange)] hover:bg-[var(--autobacs-orange-dark)] disabled:bg-[var(--autobacs-border)] disabled:text-[var(--autobacs-text-muted)] transition-all text-lg lg:text-xl font-bold flex items-center justify-center gap-3"
+                className="flex-1 h-[42px] md:h-[48px] lg:h-[60px] max-w-[280px] bg-[var(--autobacs-orange)] hover:bg-[var(--autobacs-orange-dark)] disabled:bg-[var(--autobacs-border)] disabled:text-[var(--autobacs-text-muted)] transition-all text-base md:text-lg lg:text-xl font-bold flex items-center justify-center gap-2 md:gap-3"
                 style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
               >
-                <Search size={24} />
+                <Search size={20} />
                 RECHERCHER
               </button>
               <button
                 onClick={handleDelete}
-                className="w-[64px] lg:w-[80px] h-[48px] lg:h-[60px] transition-all flex items-center justify-center text-white border border-[var(--autobacs-orange-dark)]"
+                className="w-[54px] md:w-[64px] lg:w-[80px] h-[42px] md:h-[48px] lg:h-[60px] transition-all flex items-center justify-center text-white border border-[var(--autobacs-orange-dark)]"
                 style={{
                   fontFamily: 'Barlow Condensed, sans-serif',
                   fontWeight: 700,
                   background: 'linear-gradient(135deg, var(--autobacs-orange-dark) 0%, #8A3A14 100%)',
                 }}
               >
-                <Delete size={24} />
+                <Delete size={20} />
               </button>
             </div>
           </div>
