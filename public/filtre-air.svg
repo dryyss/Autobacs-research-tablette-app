@@ -1,0 +1,15 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="6" y="14" width="52" height="36" rx="4" fill="rgba(217,120,45,0.1)" stroke="#D9782D" stroke-width="2"/>
+  <line x1="14" y1="14" x2="14" y2="50" stroke="rgba(217,120,45,0.4)" stroke-width="1.2"/>
+  <line x1="20" y1="14" x2="20" y2="50" stroke="rgba(217,120,45,0.4)" stroke-width="1.2"/>
+  <line x1="26" y1="14" x2="26" y2="50" stroke="rgba(217,120,45,0.4)" stroke-width="1.2"/>
+  <line x1="32" y1="14" x2="32" y2="50" stroke="rgba(217,120,45,0.4)" stroke-width="1.2"/>
+  <line x1="38" y1="14" x2="38" y2="50" stroke="rgba(217,120,45,0.4)" stroke-width="1.2"/>
+  <line x1="44" y1="14" x2="44" y2="50" stroke="rgba(217,120,45,0.4)" stroke-width="1.2"/>
+  <line x1="50" y1="14" x2="50" y2="50" stroke="rgba(217,120,45,0.4)" stroke-width="1.2"/>
+  <rect x="6" y="14" width="52" height="6" rx="1" fill="#D9782D" opacity="0.35"/>
+  <rect x="6" y="44" width="52" height="6" rx="1" fill="#D9782D" opacity="0.35"/>
+  <rect x="22" y="5" width="20" height="10" rx="2" fill="rgba(217,120,45,0.2)" stroke="#D9782D" stroke-width="1.5"/>
+  <path d="M10 32 L18 32" stroke="rgba(217,120,45,0.7)" stroke-width="1.5" stroke-linecap="round"/>
+  <polygon points="18,30 22,32 18,34" fill="#D9782D" opacity="0.7"/>
+</svg>

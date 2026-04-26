@@ -1,0 +1,18 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="28" cy="32" r="26" fill="rgba(217,120,45,0.08)" stroke="#D9782D" stroke-width="2.5"/>
+  <circle cx="28" cy="32" r="18" fill="none" stroke="rgba(217,120,45,0.3)" stroke-width="2"/>
+  <circle cx="28" cy="32" r="7" fill="rgba(217,120,45,0.2)" stroke="#D9782D" stroke-width="2"/>
+  <circle cx="28" cy="32" r="3" fill="#D9782D"/>
+  <circle cx="28" cy="8" r="2.2" fill="#D9782D"/>
+  <circle cx="38" cy="11" r="2.2" fill="#D9782D"/>
+  <circle cx="44" cy="20" r="2.2" fill="#D9782D"/>
+  <circle cx="44" cy="31" r="2.2" fill="#D9782D"/>
+  <circle cx="40" cy="42" r="2.2" fill="#D9782D"/>
+  <circle cx="30" cy="48" r="2.2" fill="#D9782D"/>
+  <circle cx="18" cy="46" r="2.2" fill="#D9782D"/>
+  <circle cx="11" cy="38" r="2.2" fill="#D9782D"/>
+  <circle cx="10" cy="26" r="2.2" fill="#D9782D"/>
+  <circle cx="16" cy="14" r="2.2" fill="#D9782D"/>
+  <path d="M52 22 L62 22 L62 42 L52 42" fill="rgba(217,120,45,0.15)" stroke="#D9782D" stroke-width="2" stroke-linejoin="round"/>
+  <rect x="54" y="25" width="7" height="14" rx="1" fill="#D9782D" opacity="0.6"/>
+</svg>
