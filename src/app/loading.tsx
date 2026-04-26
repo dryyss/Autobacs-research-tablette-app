@@ -71,10 +71,10 @@ export default function KioskLoading() {
 
       {/* Texte */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, animation: 'fade .5s ease forwards' }}>
-        <p style={{ color: '#fff', fontSize: 16, fontWeight: 700, margin: 0, letterSpacing: -.3 }}>
+        <p style={{ color: '#fff', fontSize: 18, fontWeight: 700, margin: 0, letterSpacing: -.3 }}>
           Chargement
         </p>
-        <p style={{ color: 'rgba(255,255,255,.3)', fontSize: 11, margin: 0, letterSpacing: .5 }}>
+        <p style={{ color: 'rgba(255,255,255,.7)', fontSize: 13, margin: 0, letterSpacing: .5, fontWeight: 500 }}>
           Veuillez patienter...
         </p>
       </div>

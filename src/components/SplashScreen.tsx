@@ -56,7 +56,7 @@ export default function SplashScreen({ onDone, duration = 1800, centre = 'Herbla
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9999,
-      background: '#0d0d0d',
+      background: '#FFFFFF',
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',
       fontFamily: 'system-ui, -apple-system, sans-serif',
@@ -73,23 +73,23 @@ export default function SplashScreen({ onDone, duration = 1800, centre = 'Herbla
       {/* Scan line ambiante */}
       <div style={{
         position: 'absolute', left: 0, right: 0, height: 1,
-        background: 'rgba(217,120,45,.07)',
+        background: 'rgba(217,120,45,.18)',
         animation: 'scanSpl 3.5s linear infinite',
       }} />
 
       {/* Glow central */}
       <div style={{
         position: 'absolute', width: 320, height: 320, borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(217,120,45,0.05), transparent 65%)',
+        background: 'radial-gradient(circle, rgba(217,120,45,0.08), transparent 65%)',
         pointerEvents: 'none',
       }} />
 
       {/* Coins */}
       {([
-        { top: 24, left: 24, borderTop: '1px solid rgba(217,120,45,.3)', borderLeft: '1px solid rgba(217,120,45,.3)' },
-        { top: 24, right: 24, borderTop: '1px solid rgba(217,120,45,.3)', borderRight: '1px solid rgba(217,120,45,.3)' },
-        { bottom: 24, left: 24, borderBottom: '1px solid rgba(217,120,45,.3)', borderLeft: '1px solid rgba(217,120,45,.3)' },
-        { bottom: 24, right: 24, borderBottom: '1px solid rgba(217,120,45,.3)', borderRight: '1px solid rgba(217,120,45,.3)' },
+        { top: 24, left: 24, borderTop: '1px solid rgba(217,120,45,.5)', borderLeft: '1px solid rgba(217,120,45,.5)' },
+        { top: 24, right: 24, borderTop: '1px solid rgba(217,120,45,.5)', borderRight: '1px solid rgba(217,120,45,.5)' },
+        { bottom: 24, left: 24, borderBottom: '1px solid rgba(217,120,45,.5)', borderLeft: '1px solid rgba(217,120,45,.5)' },
+        { bottom: 24, right: 24, borderBottom: '1px solid rgba(217,120,45,.5)', borderRight: '1px solid rgba(217,120,45,.5)' },
       ] as React.CSSProperties[]).map((s, i) => (
         <div key={i} style={{ position: 'absolute', width: 24, height: 24, ...s }} />
       ))}
@@ -100,26 +100,27 @@ export default function SplashScreen({ onDone, duration = 1800, centre = 'Herbla
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         marginBottom: 40,
       }}>
-        <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '1px solid rgba(217,120,45,.08)' }} />
-        <div style={{ position: 'absolute', inset: 8, borderRadius: '50%', border: '1px solid rgba(217,120,45,.05)' }} />
+        <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '1px solid rgba(217,120,45,.18)' }} />
+        <div style={{ position: 'absolute', inset: 8, borderRadius: '50%', border: '1px solid rgba(217,120,45,.12)' }} />
         <div style={{
           position: 'absolute', inset: 0, borderRadius: '50%',
           border: '2px solid transparent',
-          borderTopColor: '#D9782D', borderRightColor: 'rgba(217,120,45,.25)',
+          borderTopColor: '#D9782D', borderRightColor: 'rgba(217,120,45,.4)',
           animation: 'spin 1.2s linear infinite',
         }} />
         <div style={{
           position: 'absolute', inset: 14, borderRadius: '50%',
           border: '1px solid transparent',
-          borderTopColor: 'rgba(217,120,45,.3)',
+          borderTopColor: 'rgba(217,120,45,.5)',
           animation: 'spin 2s linear infinite reverse',
         }} />
         {/* Centre logo */}
         <div style={{
           width: 96, height: 96, borderRadius: '50%',
-          background: '#161616', border: '1px solid rgba(255,255,255,.06)',
+          background: '#FFFFFF', border: '1px solid rgba(0,0,0,.08)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2,
           animation: 'pulse 2s ease-in-out infinite',
+          boxShadow: '0 4px 20px rgba(217,120,45,0.12)',
         }}>
           <img src="/autobacs-logo.svg" alt="Autobacs" style={{ width: 64, height: 46, objectFit: 'contain' }} />
         </div>
@@ -127,17 +128,17 @@ export default function SplashScreen({ onDone, duration = 1800, centre = 'Herbla
 
       {/* Titre */}
       <div style={{ textAlign: 'center', marginBottom: 32, animation: 'rise .6s ease forwards' }}>
-        <p style={{ color: '#fff', fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: -.5 }}>
+        <p style={{ color: '#1A1A1A', fontSize: 24, fontWeight: 700, margin: 0, letterSpacing: -.5 }}>
           Borne de recherche produit
         </p>
-        <p style={{ color: 'rgba(255,255,255,.3)', fontSize: 13, margin: '8px 0 0', letterSpacing: .5 }}>
+        <p style={{ color: 'rgba(26,26,26,.6)', fontSize: 14, margin: '8px 0 0', letterSpacing: .5, fontWeight: 500 }}>
           Centre {centre}
         </p>
       </div>
 
       {/* Progress bar */}
       <div style={{
-        width: 220, height: 2, background: 'rgba(255,255,255,.06)',
+        width: 220, height: 2, background: 'rgba(0,0,0,.08)',
         borderRadius: 100, overflow: 'hidden', marginBottom: 14,
       }}>
         <div style={{
@@ -148,15 +149,33 @@ export default function SplashScreen({ onDone, duration = 1800, centre = 'Herbla
 
       {/* Message step */}
       <p key={step} style={{
-        color: 'rgba(255,255,255,.3)', fontSize: 11, letterSpacing: 1,
-        margin: 0, animation: 'rise .3s ease forwards',
+        color: 'rgba(26,26,26,.55)', fontSize: 13, letterSpacing: 1, fontWeight: 500,
+        margin: 0, animation: 'rise .3s ease forwards', textTransform: 'uppercase',
       }}>
         {STEPS[step]}
       </p>
 
       {/* Version */}
-      <div style={{ position: 'absolute', bottom: 24, color: 'rgba(255,255,255,.1)', fontSize: 10, letterSpacing: 1 }}>
-        v1.0.0 · MAGAR Développement
+      <div style={{ position: 'absolute', bottom: 56, color: 'rgba(26,26,26,.45)', fontSize: 11, letterSpacing: 1 }}>
+        v1.0.0
+      </div>
+
+      {/* Logo MAGAR — discret en bas */}
+      <div
+        style={{
+          position: 'absolute', bottom: 16,
+          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+          opacity: 0.7,
+        }}
+      >
+        <span style={{ fontSize: 9, letterSpacing: 1.5, color: 'rgba(26,26,26,.45)', textTransform: 'uppercase' }}>
+          Développé par
+        </span>
+        <img
+          src="/colored-logo-magar-dev.svg"
+          alt="MAGAR Développement"
+          style={{ height: 24, width: 'auto', objectFit: 'contain' }}
+        />
       </div>
     </div>
   )
