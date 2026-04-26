@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import MagarLogoChorale from './MagarLogoChorale'
 
 interface Props {
   onWake?: () => void
@@ -231,8 +230,12 @@ export default function IdleScreen({ onWake, centre = 'Herblay', idleAfter = 90_
       </div>
 
       {/* Logo MAGAR + dots footer */}
-      <div style={{ position: 'absolute', bottom: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-        <MagarLogoChorale size={60} />
+      <div style={{ position: 'absolute', bottom: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+        <img
+          src="/colored-logo-magar-dev.svg"
+          alt="MAGAR Développement"
+          style={{ height: 28, width: 'auto', opacity: 0.6 }}
+        />
         <div style={{ display: 'flex', gap: 6 }}>
           {[0, .35, .7].map((d, i) => (
             <div key={i} style={{

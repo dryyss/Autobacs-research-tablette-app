@@ -1,8 +1,6 @@
 'use client'
-// components/kiosk/SplashScreen.tsx
 
 import { useEffect, useState } from 'react'
-import MagarLogoChorale from './MagarLogoChorale'
 
 interface Props {
   onDone: () => void
@@ -152,14 +150,16 @@ export default function SplashScreen({ onDone, duration = 6500, centre = 'Herbla
         {STEPS[step]}
       </p>
 
-      {/* Version */}
-      <div style={{ position: 'absolute', bottom: 56, color: 'rgba(26,26,26,.45)', fontSize: 11, letterSpacing: 1 }}>
-        v1.0.0
-      </div>
-
-      {/* Logo MAGAR animé en bas */}
-      <div style={{ position: 'absolute', bottom: 12 }}>
-        <MagarLogoChorale size={72} />
+      {/* Logo MAGAR en bas */}
+      <div style={{
+        position: 'absolute', bottom: 14,
+        animation: 'rise 1s ease 1.5s both',
+      }}>
+        <img
+          src="/colored-logo-magar-dev.svg"
+          alt="MAGAR Développement"
+          style={{ height: 30, width: 'auto', objectFit: 'contain', opacity: 0.8 }}
+        />
       </div>
     </div>
   )
