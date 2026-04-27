@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { KioskLayout } from '@/components/KioskLayout';
 import SplashScreen from '@/components/SplashScreen';
-import HeroCarousel from '@/components/HeroCarousel';
 import { VehicleIdentification } from '@/components/VehicleIdentification';
 import { categories, promoCards, stores, products, getCategoryImage, getProductImage } from '@/data/mockData';
 import { useKiosk } from '@/context/KioskContext';
@@ -506,12 +505,6 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* ══════════ BOTTOM : Hero carousel bannières officielles Autobacs ══════════ */}
-      {/* Masqué sur mobile/petite tablette pour ne pas chevaucher le bouton RECHERCHER */}
-      <div className="hidden md:block">
-        <HeroCarousel />
       </div>
 
       {/* ══════════ BOTTOM : Bandeau promo (visible quand le bloc latéral est masqué) ══════════ */}
