@@ -23,6 +23,20 @@ const NUMBERS_LAYOUT = [
   ['5', '6', '7', '8', '9'],
 ];
 
+// Taille fluide des touches du clavier — s'adapte à la hauteur ET la largeur
+// Min 32px (très petit écran), max 60px (desktop large), idéal ~5.5 % de la
+// hauteur viewport (cap par 7 % de la largeur pour ne pas exploser en paysage).
+const KEY_STYLE: React.CSSProperties = {
+  width: 'clamp(32px, min(5.5vh, 7vw), 60px)',
+  height: 'clamp(32px, min(5.5vh, 7vw), 60px)',
+  fontFamily: 'Barlow Condensed, sans-serif',
+};
+
+const ACTION_STYLE: React.CSSProperties = {
+  height: 'clamp(38px, 6vh, 60px)',
+  fontFamily: 'Barlow Condensed, sans-serif',
+};
+
 export default function HomePage() {
   const router = useRouter();
   const {
@@ -167,9 +181,9 @@ export default function HomePage() {
   return (
     <KioskLayout>
       <div className="h-full flex flex-col overflow-hidden">
-      <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-6 px-4 lg:px-10 py-2 lg:py-6 overflow-hidden items-center">
-        {/* ══════════ LEFT : Plate keyboard ══════════ */}
-        <div className="flex flex-col items-center">
+      <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-6 px-4 lg:px-10 py-2 lg:py-6 items-center">
+        {/* ══════════ LEFT : Plate keyboard — fallback scroll si vraiment trop court ══════════ */}
+        <div className="flex flex-col items-center justify-center min-h-0 overflow-y-auto max-h-full w-full">
           {/* Headline */}
           <div className="text-center mb-2 md:mb-3 lg:mb-6">
             <h1
@@ -300,8 +314,8 @@ export default function HomePage() {
                   <button
                     key={key}
                     onClick={() => handleKeyPress(key)}
-                    className="w-[38px] h-[38px] md:w-[48px] md:h-[48px] lg:w-[60px] lg:h-[60px] bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] hover:bg-[var(--autobacs-orange)] active:bg-[var(--autobacs-orange-dark)] transition-all text-base md:text-lg lg:text-xl font-bold"
-                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
+                    className="bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] hover:bg-[var(--autobacs-orange)] active:bg-[var(--autobacs-orange-dark)] transition-all text-base md:text-lg lg:text-xl font-bold flex items-center justify-center flex-shrink-0"
+                    style={KEY_STYLE}
                   >
                     {key}
                   </button>
@@ -319,8 +333,8 @@ export default function HomePage() {
                   <button
                     key={key}
                     onClick={() => handleKeyPress(key)}
-                    className="w-[38px] h-[38px] md:w-[48px] md:h-[48px] lg:w-[60px] lg:h-[60px] bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] hover:bg-[var(--autobacs-orange)] active:bg-[var(--autobacs-orange-dark)] transition-all text-base md:text-lg lg:text-xl font-bold"
-                    style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
+                    className="bg-[var(--autobacs-card-bg)] border border-[var(--autobacs-border)] hover:border-[var(--autobacs-orange)] hover:bg-[var(--autobacs-orange)] active:bg-[var(--autobacs-orange-dark)] transition-all text-base md:text-lg lg:text-xl font-bold flex items-center justify-center flex-shrink-0"
+                    style={KEY_STYLE}
                   >
                     {key}
                   </button>
@@ -333,17 +347,17 @@ export default function HomePage() {
               <button
                 onClick={handleSearch}
                 disabled={plate.length < 6}
-                className="flex-1 h-[42px] md:h-[48px] lg:h-[60px] max-w-[280px] bg-[var(--autobacs-orange)] hover:bg-[var(--autobacs-orange-dark)] disabled:bg-[var(--autobacs-border)] disabled:text-[var(--autobacs-text-muted)] transition-all text-base md:text-lg lg:text-xl font-bold flex items-center justify-center gap-2 md:gap-3"
-                style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
+                className="flex-1 max-w-[280px] bg-[var(--autobacs-orange)] hover:bg-[var(--autobacs-orange-dark)] disabled:bg-[var(--autobacs-border)] disabled:text-[var(--autobacs-text-muted)] transition-all text-base md:text-lg lg:text-xl font-bold flex items-center justify-center gap-2 md:gap-3"
+                style={ACTION_STYLE}
               >
                 <Search size={20} />
                 RECHERCHER
               </button>
               <button
                 onClick={handleDelete}
-                className="w-[54px] md:w-[64px] lg:w-[80px] h-[42px] md:h-[48px] lg:h-[60px] transition-all flex items-center justify-center text-white border border-[var(--autobacs-orange-dark)]"
+                className="w-[54px] md:w-[64px] lg:w-[80px] transition-all flex items-center justify-center text-white border border-[var(--autobacs-orange-dark)]"
                 style={{
-                  fontFamily: 'Barlow Condensed, sans-serif',
+                  ...ACTION_STYLE,
                   fontWeight: 700,
                   background: 'linear-gradient(135deg, var(--autobacs-orange-dark) 0%, #8A3A14 100%)',
                 }}
@@ -356,7 +370,7 @@ export default function HomePage() {
         </div>
 
         {/* ══════════ RIGHT : Promos + Quick categories (grand écran seulement) ══════════ */}
-        <div className="hidden lg:flex flex-col gap-4 justify-center overflow-hidden">
+        <div className="hidden lg:flex flex-col gap-4 justify-center min-h-0 max-h-full overflow-y-auto">
           {/* Promo carousel */}
           <div
             onMouseEnter={() => setPromoPaused(true)}
