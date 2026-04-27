@@ -1,0 +1,2335 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Autobacs Loader · Guide d'intégration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --orange: #d9782d;
+  --orange-light: #e89348;
+  --orange-deep: #a04e15;
+  --paper: #fafaf7;
+  --paper-soft: #f3f0ea;
+  --ink: #0a0a0e;
+  --text: #1a1a20;
+  --text-dim: #6b6b75;
+  --text-muted: #9a9aa3;
+  --border: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.15);
+  --green: #16a34a;
+}
+
+[data-theme="dark"] {
+  --text: #f0f0f3;
+  --text-dim: #8086a8;
+  --text-muted: #4a5580;
+  --border: rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.15);
+  --paper: #0e0e15;
+  --paper-soft: #18181f;
+}
+
+html, body {
+  background: var(--paper);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+.wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 32px 120px;
+}
+
+header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 48px; flex-wrap: wrap; gap: 16px;
+}
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand-logo { width: 48px; color: var(--orange); }
+.brand-logo svg { width: 100%; height: auto; display: block; }
+.brand-text {
+  font-size: 13px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--text-dim); font-weight: 500;
+}
+.brand-text strong { color: var(--text); font-weight: 600; }
+
+.theme-toggle {
+  display: flex;
+  background: var(--paper-soft);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px; gap: 4px;
+}
+.theme-btn {
+  padding: 8px 18px; background: transparent; border: none; border-radius: 999px;
+  cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+  color: var(--text-dim); transition: all 0.2s;
+}
+.theme-btn:hover { color: var(--text); }
+.theme-btn.active { background: var(--orange); color: #fff; }
+
+.hero { max-width: 800px; margin-bottom: 56px; }
+.hero-overline {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.3em;
+  color: var(--orange); margin-bottom: 24px;
+  text-transform: uppercase;
+  display: flex; align-items: center; gap: 12px;
+}
+.hero-overline::before { content: ''; width: 32px; height: 1px; background: var(--orange); }
+.hero-title {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 900; line-height: 1;
+  letter-spacing: -0.04em; margin-bottom: 24px;
+}
+.hero-title em {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic; font-weight: 400;
+  color: var(--orange);
+}
+.hero-sub {
+  color: var(--text-dim); font-size: 17px;
+  line-height: 1.7; font-weight: 300;
+}
+
+/* ============ STEP CARDS ============ */
+.step {
+  background: var(--paper-soft);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px;
+  margin-bottom: 32px;
+}
+
+.step-header {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 20px;
+}
+.step-number {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Instrument Serif', serif;
+  font-size: 22px; font-weight: 600;
+  flex-shrink: 0;
+}
+.step-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.step-content {
+  color: var(--text-dim);
+  line-height: 1.7;
+  font-size: 14px;
+}
+.step-content p {
+  margin-bottom: 12px;
+}
+.step-content code {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--paper);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: var(--orange);
+  border: 1px solid var(--border);
+}
+[data-theme="dark"] .step-content code { background: var(--ink); }
+
+.step-content a {
+  color: var(--orange);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--orange);
+}
+.step-content a:hover { border-bottom-style: solid; }
+
+/* ============ FILE TREE ============ */
+.file-tree {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 24px;
+  font-size: 13px;
+  line-height: 2;
+  margin: 16px 0;
+}
+[data-theme="dark"] .file-tree { background: var(--ink); }
+.file-tree .folder { color: var(--orange); font-weight: 600; }
+.file-tree .file { color: var(--text); }
+.file-tree .comment { color: var(--text-muted); font-style: italic; margin-left: 16px; }
+
+/* ============ FILE DOWNLOADS ============ */
+.files-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.file-card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s ease;
+}
+.file-card:hover {
+  border-color: var(--orange);
+  transform: translateY(-2px);
+}
+[data-theme="dark"] .file-card { background: var(--ink); }
+
+.file-card-header {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 12px;
+}
+.file-icon {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--orange), var(--orange-deep));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.file-icon svg { color: #fff; }
+.file-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+.file-desc {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+  line-height: 1.5;
+  min-height: 36px;
+}
+.file-meta {
+  display: flex; gap: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  margin-bottom: 14px;
+}
+.file-meta span { padding: 3px 8px; background: var(--paper-soft); border-radius: 4px; }
+[data-theme="dark"] .file-meta span { background: var(--paper-soft); }
+
+.file-copy-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--orange);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.file-copy-btn:hover { background: var(--orange-deep); }
+.file-copy-btn.copied { background: var(--green); }
+
+/* ============ USAGE EXAMPLES ============ */
+.example {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+[data-theme="dark"] .example { background: var(--ink); }
+
+.example-header {
+  background: var(--paper-soft);
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.example-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+.example-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--orange);
+  background: rgba(217, 120, 45, 0.1);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.example pre {
+  padding: 18px 24px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text);
+  overflow-x: auto;
+  background: #0d0d12;
+  color: #f0f0f3;
+}
+.example pre .kw { color: #ff79c6; }
+.example pre .num { color: #bd93f9; }
+.example pre .str { color: #f1fa8c; }
+.example pre .com { color: #6272a4; font-style: italic; }
+.example pre .typ { color: #8be9fd; }
+
+footer {
+  margin-top: 80px; padding-top: 40px;
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+}
+.footer-left {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--text-muted); letter-spacing: 0.1em;
+  font-weight: 600;
+}
+.footer-right {
+  font-family: 'Instrument Serif', serif; font-style: italic;
+  color: var(--text-dim); font-size: 14px;
+}
+
+.callout {
+  background: linear-gradient(135deg, rgba(217, 120, 45, 0.08), rgba(160, 78, 21, 0.08));
+  border: 1px solid rgba(217, 120, 45, 0.3);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin: 18px 0;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.6;
+}
+.callout strong { color: var(--orange); font-weight: 700; }
+
+.props-table {
+  width: 100%;
+  font-size: 13px;
+  border-collapse: collapse;
+  margin-top: 14px;
+}
+.props-table th, .props-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.props-table th {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.props-table td:first-child {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--orange);
+  font-weight: 600;
+}
+.props-table td:nth-child(2) {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-dim);
+  font-size: 12px;
+}
+.props-table td:nth-child(3) {
+  color: var(--text-dim);
+}
+</style>
+</head>
+<body data-theme="light">
+
+<div class="wrapper">
+
+  <header>
+    <div class="brand">
+      <div class="brand-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 87.873 63.459">
+          <g fill="currentColor">
+            <path d="M17.285 25.295C22.18 11.824 37.986.854 53.393 0c-9.032 11.994-22.307 21.345-36.108 25.295z"/>
+            <path d="M62.049.689c2.461.576 4.67 1.475 6.58 2.646C56.402 14.791 40.944 22.99 25.455 25.563c-.104.109-.083.142-.044.142 13.692 2.573 23.429 10.772 27.667 22.227a42.924 42.924 0 0 1-8.427 2.645c-2.264-12.381-10.833-21.629-23.828-24.875-.023-.103.01-.132.046-.138C36.129 22.319 51.148 13.07 62.049.689z"/>
+            <path d="M73.059 7.136a16.402 16.402 0 0 1 2.527 4.179C62.791 19.145 48.69 24.266 34.79 25.562c-.039 0-.081.033-.096.071C47.736 27 58.268 32.119 65.6 39.949a45.016 45.016 0 0 1-5.441 4.18c-6.051-9.818-16.463-16.531-30.118-18.426-.039 0-.063-.031-.049-.07 15.065-1.966 30.162-8.68 43.067-18.497z"/>
+            <path d="M76.688 15.288c.48 3.165.139 6.665-1.145 10.345-1.283 3.681-3.383 7.18-6.068 10.344-7.91-5.815-18.004-9.458-29.856-10.274-.038 0-.063-.032-.049-.072.014-.038.056-.07.095-.07 12.423-.816 25.058-4.457 37.023-10.273z"/>
+          </g>
+        </svg>
+      </div>
+      <div class="brand-text"><strong>AUTOBACS</strong> · GUIDE D'INTÉGRATION</div>
+    </div>
+    <div class="theme-toggle">
+      <button class="theme-btn active" data-theme-set="light">Clair</button>
+      <button class="theme-btn" data-theme-set="dark">Sombre</button>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-overline">INTÉGRATION · NEXT.JS 15</div>
+    <h1 class="hero-title">Comment intégrer<br>les <em>17 animations.</em></h1>
+    <p class="hero-sub">Composant React avec random sans répétition parmi les 17 animations validées. 4 fichiers à copier dans ton projet, et c'est prêt. Compatible Next.js 15 / React 19 / TypeScript / CSS Modules.</p>
+  </div>
+
+  <!-- ============ STEP 1 : ARBORESCENCE ============ -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-number">1</div>
+      <h2 class="step-title">Crée le dossier du composant</h2>
+    </div>
+    <div class="step-content">
+      <p>Dans ton projet, crée la structure suivante. Tu peux la mettre où tu veux selon ton organisation (par exemple <code>src/components/</code> ou <code>app/components/</code>) :</p>
+      
+      <div class="file-tree">
+        <div><span class="folder">src/components/</span></div>
+        <div>&nbsp;&nbsp;<span class="folder">└── AutobacsLoader/</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="file">AutobacsLoader.tsx</span><span class="comment">le composant principal</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="file">AutobacsLoader.module.css</span><span class="comment">les 17 animations CSS</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="file">animations.ts</span><span class="comment">configuration typée</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="file">index.ts</span><span class="comment">exports publics</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ STEP 2 : FICHIERS ============ -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-number">2</div>
+      <h2 class="step-title">Copie les 4 fichiers</h2>
+    </div>
+    <div class="step-content">
+      <p>Les 4 fichiers sont dans le même dossier de téléchargement que cette page. Tu peux soit les <strong>télécharger directement</strong>, soit cliquer sur "Copier" pour avoir le contenu dans ton presse-papier.</p>
+
+      <div class="files-grid">
+        <div class="file-card">
+          <div class="file-card-header">
+            <div class="file-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </div>
+            <div class="file-name">AutobacsLoader.tsx</div>
+          </div>
+          <div class="file-desc">Composant React principal avec random sans répétition, useState lazy init et SVG embarqué.</div>
+          <div class="file-meta">
+            <span>9.3 KB</span>
+            <span>220 lignes</span>
+          </div>
+          <button class="file-copy-btn" data-copy-file="tsx">Copier le fichier</button>
+        </div>
+
+        <div class="file-card">
+          <div class="file-card-header">
+            <div class="file-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="file-name">AutobacsLoader.module.css</div>
+          </div>
+          <div class="file-desc">Toutes les règles CSS pour les 17 animations + layout commun + reduced-motion.</div>
+          <div class="file-meta">
+            <span>49 KB</span>
+            <span>1288 lignes</span>
+          </div>
+          <button class="file-copy-btn" data-copy-file="css">Copier le fichier</button>
+        </div>
+
+        <div class="file-card">
+          <div class="file-card-header">
+            <div class="file-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+            </div>
+            <div class="file-name">animations.ts</div>
+          </div>
+          <div class="file-desc">Configuration typée des 17 animations avec catégories, durées et helpers.</div>
+          <div class="file-meta">
+            <span>3.4 KB</span>
+            <span>103 lignes</span>
+          </div>
+          <button class="file-copy-btn" data-copy-file="ts">Copier le fichier</button>
+        </div>
+
+        <div class="file-card">
+          <div class="file-card-header">
+            <div class="file-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+            </div>
+            <div class="file-name">index.ts</div>
+          </div>
+          <div class="file-desc">Exports publics pour faciliter les imports depuis ton app.</div>
+          <div class="file-meta">
+            <span>0.3 KB</span>
+            <span>15 lignes</span>
+          </div>
+          <button class="file-copy-btn" data-copy-file="index">Copier le fichier</button>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>Bonne pratique :</strong> Garder le SVG du logo embarqué dans <code>AutobacsLoader.tsx</code> évite un fetch HTTP supplémentaire. Si tu préfères externaliser, tu peux remplacer le composant <code>AutobacsLogo</code> par <code>&lt;Image src="/logo.svg" /&gt;</code>.
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ STEP 3 : USAGE ============ -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-number">3</div>
+      <h2 class="step-title">Utilise-le dans ton app</h2>
+    </div>
+    <div class="step-content">
+      <p>Une fois les fichiers en place, importe et utilise le composant. Il choisit automatiquement une animation au hasard parmi les 17 (sans répéter la précédente).</p>
+
+      <div class="example">
+        <div class="example-header">
+          <div class="example-title">Usage le plus simple</div>
+          <span class="example-tag">RANDOM PAR DÉFAUT</span>
+        </div>
+        <pre><span class="kw">import</span> { AutobacsLoader } <span class="kw">from</span> <span class="str">'@/components/AutobacsLoader'</span>;
+
+<span class="kw">export default function</span> <span class="typ">VehicleSearchPage</span>() {
+  <span class="kw">const</span> { data, isLoading } = <span class="typ">useQuery</span>({ ... });
+
+  <span class="kw">if</span> (isLoading) {
+    <span class="kw">return</span> (
+      &lt;<span class="typ">AutobacsLoader</span>
+        title=<span class="str">"Identification du véhicule"</span>
+        subtitle=<span class="str">"Recherche dans la base immatriculation…"</span>
+      /&gt;
+    );
+  }
+  <span class="kw">return</span> &lt;<span class="typ">VehicleDetails</span> data={data} /&gt;;
+}</pre>
+      </div>
+
+      <div class="example">
+        <div class="example-header">
+          <div class="example-title">Avec Suspense (Next.js)</div>
+          <span class="example-tag">REACT 19</span>
+        </div>
+        <pre><span class="kw">import</span> { Suspense } <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">import</span> { AutobacsLoader } <span class="kw">from</span> <span class="str">'@/components/AutobacsLoader'</span>;
+
+<span class="kw">export default function</span> <span class="typ">Page</span>() {
+  <span class="kw">return</span> (
+    &lt;<span class="typ">Suspense</span> fallback={&lt;<span class="typ">AutobacsLoader</span> /&gt;}&gt;
+      &lt;<span class="typ">VehicleDetails</span> /&gt;
+    &lt;/<span class="typ">Suspense</span>&gt;
+  );
+}</pre>
+      </div>
+
+      <div class="example">
+        <div class="example-header">
+          <div class="example-title">Forcer une animation spécifique</div>
+          <span class="example-tag">CAS PARTICULIERS</span>
+        </div>
+        <pre><span class="com">// Ex : pour le splash de démarrage tu veux toujours Aurora Wave</span>
+&lt;<span class="typ">AutobacsLoader</span>
+  force=<span class="str">"aurora"</span>
+  size=<span class="str">"lg"</span>
+  title=<span class="str">"Chargement de l'application"</span>
+/&gt;</pre>
+      </div>
+
+      <div class="example">
+        <div class="example-header">
+          <div class="example-title">Exclure certaines anims du pool</div>
+          <span class="example-tag">CONFIGURATION</span>
+        </div>
+        <pre><span class="com">// Garder seulement les anims les plus rapides pour les fetch courts</span>
+&lt;<span class="typ">AutobacsLoader</span>
+  exclude={[<span class="str">'lantern'</span>, <span class="str">'incense'</span>, <span class="str">'watercolor'</span>, <span class="str">'fireflies'</span>]}
+  title=<span class="str">"Recherche en cours"</span>
+/&gt;</pre>
+      </div>
+
+      <div class="example">
+        <div class="example-header">
+          <div class="example-title">Random uniquement dans une catégorie</div>
+          <span class="example-tag">USAGE AVANCÉ</span>
+        </div>
+        <pre><span class="kw">import</span> { AutobacsLoader, getAnimationsByCategory } <span class="kw">from</span> <span class="str">'@/components/AutobacsLoader'</span>;
+
+<span class="com">// Splash long et apaisant : que des anims poétiques</span>
+<span class="kw">const</span> poolPoetic = <span class="typ">getAnimationsByCategory</span>(<span class="str">'poetic'</span>).map(a =&gt; a.id);
+
+&lt;<span class="typ">AutobacsLoader</span>
+  pool={poolPoetic}
+  size=<span class="str">"lg"</span>
+  title=<span class="str">"Synchronisation longue"</span>
+  subtitle=<span class="str">"Cela peut prendre quelques minutes…"</span>
+/&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ STEP 4 : PROPS ============ -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-number">4</div>
+      <h2 class="step-title">Référence des props</h2>
+    </div>
+    <div class="step-content">
+      <table class="props-table">
+        <thead>
+          <tr>
+            <th>Prop</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>force</td>
+            <td>AnimationId?</td>
+            <td>Force une animation spécifique au lieu d'un random</td>
+          </tr>
+          <tr>
+            <td>exclude</td>
+            <td>AnimationId[]?</td>
+            <td>Anims à retirer du pool de random</td>
+          </tr>
+          <tr>
+            <td>pool</td>
+            <td>AnimationId[]?</td>
+            <td>Pool d'anims spécifique (défaut : DEFAULT_POOL = 16 anims sans Live Pulse)</td>
+          </tr>
+          <tr>
+            <td>size</td>
+            <td>'sm' | 'md' | 'lg' | 'xl'</td>
+            <td>Taille du logo (80 / 160 / 240 / 320 px). Défaut : 'md'</td>
+          </tr>
+          <tr>
+            <td>title</td>
+            <td>string?</td>
+            <td>Titre affiché sous le logo</td>
+          </tr>
+          <tr>
+            <td>subtitle</td>
+            <td>string?</td>
+            <td>Sous-titre en plus petit</td>
+          </tr>
+          <tr>
+            <td>fullHeight</td>
+            <td>boolean?</td>
+            <td>Le loader prend min-height: 240px (défaut: true)</td>
+          </tr>
+          <tr>
+            <td>className</td>
+            <td>string?</td>
+            <td>Classe CSS supplémentaire</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============ STEP 5 : NOTES ============ -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-number">5</div>
+      <h2 class="step-title">Notes importantes</h2>
+    </div>
+    <div class="step-content">
+      <p><strong style="color: var(--text); font-weight: 700;">Random sans répétition</strong></p>
+      <p>Une variable globale <code>lastAnimId</code> garde en mémoire la dernière anim affichée. Au prochain montage du composant (peu importe où dans l'app), elle sera évitée. Ça garantit que tu ne vois jamais 2 fois la même anim de suite.</p>
+
+      <p><strong style="color: var(--text); font-weight: 700;">Live Pulse exclu par défaut</strong></p>
+      <p>L'animation <code>live</code> (Live Pulse) est une boucle infinie qui ne signale pas de fin de chargement. Elle est exclue du <code>DEFAULT_POOL</code>. Si tu veux l'inclure quand même, passe explicitement <code>pool={[...DEFAULT_POOL, 'live']}</code>.</p>
+
+      <p><strong style="color: var(--text); font-weight: 700;">Accessibilité</strong></p>
+      <p>Le composant a <code>role="status"</code>, <code>aria-live="polite"</code> et <code>aria-label</code>. Il respecte aussi <code>prefers-reduced-motion</code> : les animations sont désactivées pour les utilisateurs qui préfèrent moins de mouvement.</p>
+
+      <p><strong style="color: var(--text); font-weight: 700;">Mode dark</strong></p>
+      <p>Le composant détecte automatiquement <code>prefers-color-scheme: dark</code>. Si ton app a son propre système de thème, tu peux passer une <code>className</code> et override les variables CSS dans ton thème.</p>
+
+      <p><strong style="color: var(--text); font-weight: 700;">Performance</strong></p>
+      <p>Le CSS module pèse 49 KB (≈ 12 KB gzip). Toutes les animations sont CSS pur, aucune dépendance JavaScript ajoutée. Le rendu est instantané, pas de FOUC.</p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-left">AUTOBACS · 17 ANIMATIONS · MAGAR DÉVELOPPEMENT</div>
+    <div class="footer-right">« Une attente, une histoire à chaque fois. »</div>
+  </footer>
+
+</div>
+
+<script>
+// File contents pour la copie
+const FILES = {
+  tsx: `'use client';
+
+// components/AutobacsLoader/AutobacsLoader.tsx
+
+import { useState, useMemo } from 'react';
+import styles from './AutobacsLoader.module.css';
+import {
+  ANIMATIONS,
+  DEFAULT_POOL,
+  type AnimationId,
+} from './animations';
+
+export interface AutobacsLoaderProps {
+  /** Force une animation spécifique au lieu d'un random */
+  force?: AnimationId;
+  /** Anims à exclure du pool de random */
+  exclude?: AnimationId[];
+  /** Pool d'anims spécifique à utiliser (par défaut : DEFAULT_POOL = 16 anims sans Live Pulse) */
+  pool?: AnimationId[];
+  /** Taille du logo (sm: 80px, md: 160px, lg: 240px, xl: 320px) */
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  /** Titre optionnel sous le logo */
+  title?: string;
+  /** Sous-titre optionnel */
+  subtitle?: string;
+  /** Classe CSS supplémentaire */
+  className?: string;
+  /** Le loader prend toute la hauteur de son conteneur (default: true) */
+  fullHeight?: boolean;
+}
+
+// Mémoire globale partagée entre tous les loaders pour éviter répétition
+let lastAnimId: AnimationId | null = null;
+
+function pickAnimation(
+  pool: AnimationId[],
+  exclude: AnimationId[] = [],
+  force?: AnimationId,
+): AnimationId {
+  if (force) return force;
+
+  // Exclure la dernière vue + les exclusions explicites
+  const available = pool.filter(
+    id => !exclude.includes(id) && id !== lastAnimId,
+  );
+
+  // Fallback : si tout est exclu sauf la dernière, on l'autorise
+  const candidates = available.length > 0
+    ? available
+    : pool.filter(id => !exclude.includes(id));
+
+  if (candidates.length === 0) {
+    // Cas extrême : on retourne la première du pool
+    return pool[0] ?? 'pulse-wave';
+  }
+
+  const picked = candidates[Math.floor(Math.random() * candidates.length)];
+  lastAnimId = picked;
+  return picked;
+}
+
+export function AutobacsLoader({
+  force,
+  exclude = [],
+  pool = DEFAULT_POOL,
+  size = 'md',
+  title,
+  subtitle,
+  className = '',
+  fullHeight = true,
+}: AutobacsLoaderProps) {
+  // Pick UNIQUEMENT au montage (lazy init avec useState)
+  // useMemo serait recalculé si les deps changent ; useState garantit la stabilité.
+  const animId = useState(() => pickAnimation(pool, exclude, force))[0];
+
+  const animConfig = useMemo(
+    () => ANIMATIONS.find(a => a.id === animId),
+    [animId],
+  );
+
+  const overlays = animConfig?.overlays ?? [];
+
+  return (
+    <div
+      className={[
+        styles.loader,
+        fullHeight && styles.fullHeight,
+        className,
+      ].filter(Boolean).join(' ')}
+      data-variant={animId}
+      data-size={size}
+      role="status"
+      aria-live="polite"
+      aria-label={title ?? 'Chargement en cours'}
+    >
+      {/* Overlays selon la variante */}
+      {overlays.includes('sumi-drop') && <div className={styles.sumiDrop} />}
+      {overlays.includes('spiral') && (
+        <>
+          <div className={styles.spiralGrid} />
+          <div className={styles.spiralHead} />
+        </>
+      )}
+      {overlays.includes('aurora-glow') && <div className={styles.auroraGlow} />}
+      {overlays.includes('fireflies') && (
+        <div className={styles.fireflies}>
+          {Array.from({ length: 7 }).map((_, i) => <span key={i} />)}
+        </div>
+      )}
+      {overlays.includes('watercolor') && (
+        <div className={styles.watercolorBg}>
+          {Array.from({ length: 4 }).map((_, i) => <span key={i} />)}
+        </div>
+      )}
+      {overlays.includes('constellation-stars') && (
+        <>
+          <div className={styles.constellationStars}>
+            {Array.from({ length: 9 }).map((_, i) => <span key={i} />)}
+          </div>
+          <div className={styles.constellationLines}>
+            <svg viewBox="0 0 200 200">
+              <polyline points="60,50 100,100 140,70 100,160 60,130 60,50" />
+            </svg>
+          </div>
+        </>
+      )}
+      {overlays.includes('embers') && (
+        <>
+          <div className={styles.emberFireGlow} />
+          <div className={styles.embers}>
+            {Array.from({ length: 10 }).map((_, i) => <span key={i} />)}
+          </div>
+        </>
+      )}
+      {overlays.includes('rain') && (
+        <>
+          <div className={styles.rainDrops}>
+            {Array.from({ length: 10 }).map((_, i) => <span key={i} />)}
+          </div>
+          <div className={styles.pondRipples}>
+            {Array.from({ length: 5 }).map((_, i) => <span key={i} />)}
+          </div>
+        </>
+      )}
+      {overlays.includes('lanterns') && (
+        <>
+          <div className={styles.lanternGlowBg} />
+          <div className={styles.lanterns}>
+            {Array.from({ length: 6 }).map((_, i) => <span key={i} />)}
+          </div>
+        </>
+      )}
+      {overlays.includes('incense') && (
+        <>
+          <div className={styles.smokeTrails}>
+            {Array.from({ length: 6 }).map((_, i) => <span key={i} />)}
+          </div>
+          <div className={styles.incenseStick} />
+        </>
+      )}
+      {overlays.includes('stardust') && (
+        <>
+          <div className={styles.stardustBg} />
+          <div className={styles.stardustNebula} />
+          <div className={styles.stardust}>
+            {Array.from({ length: 8 }).map((_, i) => <span key={i} />)}
+          </div>
+        </>
+      )}
+
+      <div className={styles.visual} aria-hidden="true">
+        <AutobacsLogo />
+      </div>
+
+      {(title || subtitle) && (
+        <div className={styles.message}>
+          {title && <div className={styles.title}>{title}</div>}
+          {subtitle && <div className={styles.subtitle}>{subtitle}</div>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AutobacsLogo() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 87.873 63.459">
+      <g fill="currentColor">
+        <path
+          data-element="wave"
+          data-wave="0"
+          d="M17.285 25.295C22.18 11.824 37.986.854 53.393 0c-9.032 11.994-22.307 21.345-36.108 25.295z"
+        />
+        <path
+          data-element="wave"
+          data-wave="1"
+          d="M62.049.689c2.461.576 4.67 1.475 6.58 2.646C56.402 14.791 40.944 22.99 25.455 25.563c-.104.109-.083.142-.044.142 13.692 2.573 23.429 10.772 27.667 22.227a42.924 42.924 0 0 1-8.427 2.645c-2.264-12.381-10.833-21.629-23.828-24.875-.023-.103.01-.132.046-.138C36.129 22.319 51.148 13.07 62.049.689z"
+        />
+        <path
+          data-element="wave"
+          data-wave="2"
+          d="M73.059 7.136a16.402 16.402 0 0 1 2.527 4.179C62.791 19.145 48.69 24.266 34.79 25.562c-.039 0-.081.033-.096.071C47.736 27 58.268 32.119 65.6 39.949a45.016 45.016 0 0 1-5.441 4.18c-6.051-9.818-16.463-16.531-30.118-18.426-.039 0-.063-.031-.049-.07 15.065-1.966 30.162-8.68 43.067-18.497z"
+        />
+        <path
+          data-element="wave"
+          data-wave="3"
+          d="M76.688 15.288c.48 3.165.139 6.665-1.145 10.345-1.283 3.681-3.383 7.18-6.068 10.344-7.91-5.815-18.004-9.458-29.856-10.274-.038 0-.063-.032-.049-.072.014-.038.056-.07.095-.07 12.423-.816 25.058-4.457 37.023-10.273z"
+        />
+        <path
+          data-element="seal"
+          d="M35.515 51.266c-14.811-.854-22.966-11.824-18.466-25.294 11.046 3.95 17.8 13.301 18.466 25.294z"
+        />
+        <path
+          data-element="text"
+          d="M12.344 63.303l-1.063-5.996c-.1-.568-.521-1.137-1.198-1.141H8.249c-.687.004-1.529.213-2.173.857L0 63.303h4.587l.737-1.084h2.885v1.084h4.135zm-6.202-2.289l2.067-3.047v3.047H6.142z M31.67 57.732h2.333l.592-1.4h-9.334l-.585 1.4h2.686l-2.364 5.573h4.308l2.364-5.573z M78.195 56.404c-.359-.078-1.434-.273-3.033-.242-5.287-.123-7.549 2.268-7.711 4.385.006 1.723 1.926 2.703 4.535 2.893.125.008.25.014.375.02h1.117a11.91 11.91 0 0 0 2.092-.264l1.639-1.668c-1.055.26-2.361.396-3.438.207-1.061-.154-1.809-.635-1.809-1.486 0-.178.049-.371.111-.549.666-1.529 2.346-1.949 3.672-1.971.791-.018 1.689.062 2.449.326v-1.651h.001z M40.831 56.197c-.982-.08-4.533-.221-6.502 1.807-.593.605-.985 1.43-.985 2.281 0 1.561 1.392 2.871 4.335 3.137.185.018.368.029.548.037h1.01c3.006-.141 5.051-1.539 5.691-3.053.169-.408.265-.832.265-1.244.01-1.351-1.06-2.719-4.362-2.965zm-.08 3.889c-.616 1.48-1.427 1.908-2.323 1.818-.569-.07-.944-.396-.944-1.08 0-.312.066-.688.208-1.137.434-1.377 1.191-2.289 2.48-2.123.631.084.9.555.9 1.15 0 .401-.119.872-.321 1.372z M53.746 56.332h-5.404c-.549.006-1.137.43-1.359.965-.004 0-1.301 3.023-2.023 4.781-.276.723.107 1.225.722 1.225h4.893c2.301 0 4.729-.402 5.236-1.627.506-1.225-.225-1.779-1.77-2.082-.018-.004-.016-.012.006-.012.564-.012 2.076-.33 2.531-1.432.377-.906.117-1.818-2.832-1.818zm-2.086 4.732c-.258.621-.887.793-1.68.793h-.629l.713-1.682h.66c.559.001 1.225.19.936.889zm.94-2.498c-.223.533-.773.73-1.494.73h-.668l.66-1.557h.867c.617.001.855.29.635.827z M22.779 60.744c-.641 1.52-1.725 2.66-5.883 2.715h-.494c-2.355-.049-3.95-.908-3.95-2.205 0-.242.038-.523.171-.834l1.736-4.088h4.308l-1.805 4.256c-.086.215-.21.428-.21.666 0 .344.175.607.709.654.899.082 1.21-.604 1.394-1.027l1.925-4.549h3.951l-1.852 4.412z M82.654 56.236c.498-.068 1.385-.107 2.178-.078.996.029 2.057.113 3.041.348v1.629c-.803-.381-1.545-.529-2.449-.533-1.027 0-1.525.209-1.68.506-.283.516.549.83.889.977.986.42 3.131.982 2.625 2.502-.582 1.682-3.986 1.836-5.869 1.873h-1.438a10.568 10.568 0 0 1-1.941-.238l-.189-1.805c1.008.344 1.928.535 2.998.539.975.002 1.686-.203 1.754-.729.145-1-3.895-1.166-3.404-3.143.313-1.273 2.315-1.758 3.485-1.848z M67.346 63.303l-1.066-5.996c-.098-.568-.521-1.137-1.197-1.141h-1.834c-.688.004-1.529.213-2.172.857l-6.078 6.27.996.01h3.592l.736-1.084h2.885v1.084h4.138zm-6.205-2.289l2.066-3.047v3.047h-2.066z"
+        />
+      </g>
+    </svg>
+  );
+}
+`,
+  css: `
+/* ================================================================ */
+/*                                                                  */
+/*   AUTOBACS LOADER · MODULE CSS                                   */
+/*   17 animations · CSS scopé module                               */
+/*                                                                  */
+/* ================================================================ */
+
+/* ============ LAYOUT COMMUN ============ */
+
+.loader {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 28px;
+  width: 100%;
+  overflow: hidden;
+  color: #d9782d;
+  background: #fafaf7;
+}
+
+.loader.fullHeight {
+  min-height: 240px;
+  padding: 48px 24px;
+}
+
+/* Tailles */
+.loader[data-size="sm"] .visual { width: 80px; height: 80px; }
+.loader[data-size="md"] .visual { width: 160px; height: 160px; }
+.loader[data-size="lg"] .visual { width: 240px; height: 240px; }
+.loader[data-size="xl"] .visual { width: 320px; height: 320px; }
+
+.visual {
+  width: 160px;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 4;
+}
+
+.visual svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.visual svg path {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.visual svg path[data-element="seal"],
+.visual svg path[data-element="text"] {
+  opacity: 0.5;
+}
+
+.message {
+  text-align: center;
+  position: relative;
+  z-index: 5;
+  max-width: 400px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a20;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #6b6b75;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* Mode dark si parent .dark ou data-theme=dark */
+@media (prefers-color-scheme: dark) {
+  .loader { background: #0a0a0e; }
+  .title { color: #f0f0f3; }
+  .subtitle { color: #8086a8; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .loader *,
+  .loader *::before,
+  .loader *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Variables internes pour les animations qui en ont besoin */
+.loader {
+  --orange: #d9782d;
+  --orange-light: #e89348;
+  --orange-deep: #a04e15;
+  --orange-pale: #f4c699;
+  --orange-dark: #862e0e;
+  --magenta-aurora: #c93578;
+  --cyan-aurora: #3da9d3;
+  --violet-aurora: #6f4cb5;
+  --pink-spring: #f5b3c4;
+  --gold-summer: #e6b73c;
+  --amber-autumn: #c8703a;
+  --blue-winter: #6f9cc4;
+  --silver-moon: #d4dde6;
+  --silver-pale: #eef2f7;
+  --ember-red: #ff6b35;
+  --ember-yellow: #ffb84d;
+  --rain-blue: #5b8cbe;
+  --lantern-glow: #ffa959;
+  --smoke-grey: #a8a8b0;
+  --stardust-purple: #9b6dd6;
+  --stardust-cyan: #5cd8e8;
+  --washi: #f4ede0;
+  --night: #06070d;
+  --twilight: #0f1320;
+  --evening: #1c1530;
+  --pond: #14283c;
+  --space: #050816;
+  --ink: #0a0a0e;
+}
+
+
+/* ============ ANIMATIONS (8 du random loader) ============ */
+/* ============================================================ */
+/*                                                              */
+/*   LOADER STAGE                                               */
+/*                                                              */
+/* ============================================================ */
+
+.loader {
+  width: 100%; height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Backgrounds par variante */
+.loader[data-variant="aurora"] {
+  background: linear-gradient(180deg, var(--night) 0%, #1a1a30 100%);
+}
+.loader[data-variant="fireflies"] {
+  background: linear-gradient(180deg, var(--night), var(--twilight));
+}
+.loader[data-variant="sumi"] { background: var(--washi); }
+[data-theme="dark"] .loader[data-variant="sumi"] { background: #1a1610; }
+.loader[data-variant="calligraphy"] { background: var(--washi); }
+[data-theme="dark"] .loader[data-variant="calligraphy"] { background: #1a1610; }
+.loader[data-variant="fan"] { background: var(--washi); }
+[data-theme="dark"] .loader[data-variant="fan"] { background: #1a1610; }
+.loader[data-variant="spiral"] { background: #000; }
+
+.autobacs-loader__visual {
+  width: 160px; height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: var(--orange);
+  z-index: 4;
+}
+.autobacs-loader__visual svg {
+  width: 100%; height: auto;
+  display: block;
+  overflow: visible;
+}
+.autobacs-loader__visual svg path {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.autobacs-loader__visual svg path[data-element="seal"],
+.autobacs-loader__visual svg path[data-element="text"] {
+  opacity: 0.5;
+}
+
+/* ===== PULSE WAVE ===== */
+.loader[data-variant="pulse-wave"] svg path[data-element="wave"] {
+  animation: ab-pulse-wave 2s ease-in-out infinite;
+}
+.loader[data-variant="pulse-wave"] svg path[data-wave="0"] { animation-delay: 0s; }
+.loader[data-variant="pulse-wave"] svg path[data-wave="1"] { animation-delay: 0.2s; }
+.loader[data-variant="pulse-wave"] svg path[data-wave="2"] { animation-delay: 0.4s; }
+.loader[data-variant="pulse-wave"] svg path[data-wave="3"] { animation-delay: 0.6s; }
+@keyframes ab-pulse-wave {
+  0%, 100% { opacity: 0.25; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+
+/* ===== STAGGER FADE ===== */
+.loader[data-variant="stagger"] svg path[data-element="wave"] {
+  animation: ab-stagger 1.6s ease-in-out infinite;
+  opacity: 0;
+}
+.loader[data-variant="stagger"] svg path[data-wave="0"] { animation-delay: 0s; }
+.loader[data-variant="stagger"] svg path[data-wave="1"] { animation-delay: 0.15s; }
+.loader[data-variant="stagger"] svg path[data-wave="2"] { animation-delay: 0.3s; }
+.loader[data-variant="stagger"] svg path[data-wave="3"] { animation-delay: 0.45s; }
+@keyframes ab-stagger {
+  0% { opacity: 0; transform: translateX(-8px); }
+  20%, 60% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(8px); }
+}
+
+/* ===== SUMI-E ===== */
+.loader[data-variant="sumi"] svg path {
+  opacity: 0;
+  filter: blur(15px);
+}
+.loader[data-variant="sumi"] svg path[data-element="wave"] {
+  animation: ab-sumi 4s ease-out infinite;
+}
+.loader[data-variant="sumi"] svg path[data-wave="0"] { animation-delay: 0s; }
+.loader[data-variant="sumi"] svg path[data-wave="1"] { animation-delay: 0.4s; }
+.loader[data-variant="sumi"] svg path[data-wave="2"] { animation-delay: 0.8s; }
+.loader[data-variant="sumi"] svg path[data-wave="3"] { animation-delay: 1.2s; }
+.loader[data-variant="sumi"] svg path[data-element="seal"] {
+  animation: ab-sumi-seal 4s ease-out infinite;
+  animation-delay: 1.6s;
+}
+.loader[data-variant="sumi"] svg path[data-element="text"] {
+  animation: ab-sumi-text 4s ease-out infinite;
+  animation-delay: 2s;
+}
+@keyframes ab-sumi {
+  0% { opacity: 0; filter: blur(15px); transform: scale(0.5); }
+  25% { opacity: 0.6; filter: blur(8px); transform: scale(1.1); }
+  60% { opacity: 1; filter: blur(0); transform: scale(1); }
+  90% { opacity: 0.8; filter: blur(0); }
+  100% { opacity: 0; filter: blur(8px); }
+}
+@keyframes ab-sumi-seal {
+  0% { opacity: 0; filter: blur(15px); transform: scale(0.5); }
+  35% { opacity: 0.7; filter: blur(0); transform: scale(1); }
+  90% { opacity: 0.7; }
+  100% { opacity: 0; filter: blur(8px); }
+}
+@keyframes ab-sumi-text {
+  0% { opacity: 0; filter: blur(15px); }
+  35% { opacity: 0.6; filter: blur(0); }
+  90% { opacity: 0.6; }
+  100% { opacity: 0; }
+}
+.loader[data-variant="sumi"] .sumiDrop {
+  position: absolute; top: 50%; left: 50%;
+  width: 8px; height: 8px;
+  background: radial-gradient(circle, var(--orange-deep), rgba(217, 120, 45, 0.4) 60%, transparent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  filter: blur(2px);
+  z-index: 2;
+  animation: ab-sumi-drop 4s ease-out infinite;
+}
+@keyframes ab-sumi-drop {
+  0% { transform: translate(-50%,-50%) scale(0); opacity: 0; }
+  10% { transform: translate(-50%,-50%) scale(2); opacity: 1; }
+  40% { transform: translate(-50%,-50%) scale(8); opacity: 0.5; filter: blur(10px); }
+  70% { transform: translate(-50%,-50%) scale(15); opacity: 0; filter: blur(20px); }
+}
+
+/* ===== CALLIGRAPHY ===== */
+.loader[data-variant="calligraphy"] svg path[data-element="wave"] {
+  fill-opacity: 0;
+  stroke: var(--orange-deep);
+  stroke-width: 0.6;
+  stroke-dasharray: 250;
+  stroke-dashoffset: 250;
+  animation: ab-calli-draw 4.5s cubic-bezier(0.5, 0, 0.5, 1) infinite,
+             ab-calli-fill 4.5s ease-out infinite;
+}
+.loader[data-variant="calligraphy"] svg path[data-element="seal"],
+.loader[data-variant="calligraphy"] svg path[data-element="text"] { opacity: 0; }
+.loader[data-variant="calligraphy"] svg path[data-wave="0"] { animation-delay: 0s, 0.3s; }
+.loader[data-variant="calligraphy"] svg path[data-wave="1"] { animation-delay: 0.3s, 0.6s; }
+.loader[data-variant="calligraphy"] svg path[data-wave="2"] { animation-delay: 0.6s, 0.9s; }
+.loader[data-variant="calligraphy"] svg path[data-wave="3"] { animation-delay: 0.9s, 1.2s; }
+@keyframes ab-calli-draw {
+  0% { stroke-dashoffset: 250; stroke-width: 0.4; }
+  20% { stroke-width: 1.8; filter: drop-shadow(0 0 6px var(--orange-deep)); }
+  50% { stroke-dashoffset: 0; stroke-width: 1; }
+  80%, 90% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+@keyframes ab-calli-fill {
+  0%, 30% { fill-opacity: 0; stroke-opacity: 1; }
+  60%, 90% { fill-opacity: 1; stroke-opacity: 0; }
+  100% { fill-opacity: 0; stroke-opacity: 0; }
+}
+.loader[data-variant="calligraphy"] svg path[data-element="seal"] {
+  animation: ab-calli-emerge 4.5s ease-out infinite;
+  animation-delay: 1.5s;
+}
+.loader[data-variant="calligraphy"] svg path[data-element="text"] {
+  animation: ab-calli-emerge 4.5s ease-out infinite;
+  animation-delay: 1.8s;
+}
+@keyframes ab-calli-emerge {
+  0% { opacity: 0; transform: translateY(8px); }
+  20%, 80% { opacity: 0.6; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-4px); }
+}
+
+/* ===== FAN FOLD ===== */
+.loader[data-variant="fan"] {
+  perspective: 1200px;
+}
+.loader[data-variant="fan"] .autobacs-loader__visual {
+  transform-style: preserve-3d;
+}
+.loader[data-variant="fan"] svg {
+  transform-style: preserve-3d;
+}
+.loader[data-variant="fan"] svg path[data-element="wave"] {
+  transform-origin: 50% 100%;
+}
+.loader[data-variant="fan"] svg path[data-wave="0"] {
+  animation: ab-fan-0 4s cubic-bezier(0.7, 0, 0.3, 1) infinite;
+}
+.loader[data-variant="fan"] svg path[data-wave="1"] {
+  animation: ab-fan-1 4s cubic-bezier(0.7, 0, 0.3, 1) infinite;
+}
+.loader[data-variant="fan"] svg path[data-wave="2"] {
+  animation: ab-fan-2 4s cubic-bezier(0.7, 0, 0.3, 1) infinite;
+}
+.loader[data-variant="fan"] svg path[data-wave="3"] {
+  animation: ab-fan-3 4s cubic-bezier(0.7, 0, 0.3, 1) infinite;
+}
+.loader[data-variant="fan"] svg path[data-element="seal"] {
+  animation: ab-fan-seal 4s ease-in-out infinite;
+}
+@keyframes ab-fan-0 {
+  0%, 100% { transform: rotateY(0deg) scaleX(1); filter: none; }
+  35%, 50% { transform: rotateY(-80deg) scaleX(0.4); filter: brightness(0.6); }
+  85% { transform: rotateY(0deg) scaleX(1); filter: none; }
+}
+@keyframes ab-fan-1 {
+  0%, 100% { transform: rotateY(0deg) scaleX(1); filter: none; }
+  35%, 50% { transform: rotateY(-50deg) scaleX(0.6); filter: brightness(0.7); }
+  85% { transform: rotateY(0deg) scaleX(1); filter: none; }
+}
+@keyframes ab-fan-2 {
+  0%, 100% { transform: rotateY(0deg) scaleX(1); filter: none; }
+  35%, 50% { transform: rotateY(50deg) scaleX(0.6); filter: brightness(0.7); }
+  85% { transform: rotateY(0deg) scaleX(1); filter: none; }
+}
+@keyframes ab-fan-3 {
+  0%, 100% { transform: rotateY(0deg) scaleX(1); filter: none; }
+  35%, 50% { transform: rotateY(80deg) scaleX(0.4); filter: brightness(0.6); }
+  85% { transform: rotateY(0deg) scaleX(1); filter: none; }
+}
+@keyframes ab-fan-seal {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  35%, 50% { opacity: 1; transform: scale(1.15); }
+}
+
+/* ===== SPIRAL CUT ===== */
+.loader[data-variant="spiral"] svg path { opacity: 0; }
+.loader[data-variant="spiral"] svg path[data-element="wave"] {
+  animation: ab-spiral-reveal 3.5s ease-out infinite;
+}
+.loader[data-variant="spiral"] svg path[data-element="seal"] {
+  animation: ab-spiral-seal 3.5s ease-out infinite;
+  animation-delay: 0.2s;
+}
+.loader[data-variant="spiral"] svg path[data-wave="0"] { animation-delay: 0.6s; }
+.loader[data-variant="spiral"] svg path[data-wave="1"] { animation-delay: 1s; }
+.loader[data-variant="spiral"] svg path[data-wave="2"] { animation-delay: 1.4s; }
+.loader[data-variant="spiral"] svg path[data-wave="3"] { animation-delay: 1.8s; }
+.loader[data-variant="spiral"] svg path[data-element="text"] {
+  animation: ab-spiral-text 3.5s ease-out infinite;
+  animation-delay: 2.2s;
+}
+@keyframes ab-spiral-reveal {
+  0% { opacity: 0; filter: brightness(5) drop-shadow(0 0 12px var(--orange)); }
+  10% { opacity: 1; filter: brightness(3); }
+  85% { opacity: 1; filter: none; }
+  100% { opacity: 0; }
+}
+@keyframes ab-spiral-seal {
+  0% { opacity: 0; filter: brightness(5); }
+  10% { opacity: 0.85; filter: brightness(3); }
+  85% { opacity: 0.7; filter: none; }
+  100% { opacity: 0; }
+}
+@keyframes ab-spiral-text {
+  0% { opacity: 0; }
+  20% { opacity: 0.5; }
+  85% { opacity: 0.5; }
+  100% { opacity: 0; }
+}
+.loader[data-variant="spiral"] .spiralHead {
+  position: absolute;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 10px var(--orange), 0 0 20px var(--orange), 0 0 40px var(--orange-light);
+  z-index: 6;
+  opacity: 0;
+  top: 50%; left: 50%;
+  animation: ab-spiral-path 3.5s cubic-bezier(0.4, 0, 0.4, 1) infinite;
+}
+@keyframes ab-spiral-path {
+  0% { top: 50%; left: 50%; opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+  3% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  10% { top: 45%; left: 55%; }
+  20% { top: 35%; left: 65%; }
+  30% { top: 30%; left: 50%; }
+  40% { top: 35%; left: 30%; }
+  50% { top: 50%; left: 25%; }
+  60% { top: 65%; left: 30%; }
+  70% { top: 70%; left: 50%; }
+  80% { top: 60%; left: 75%; }
+  90% { top: 30%; left: 80%; opacity: 0.8; }
+  100% { top: 0%; left: 110%; opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+}
+.loader[data-variant="spiral"] .spiralGrid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(217, 120, 45, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(217, 120, 45, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  animation: ab-spiral-grid 3.5s ease-out infinite;
+}
+@keyframes ab-spiral-grid {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  85% { opacity: 0.5; }
+  100% { opacity: 0; }
+}
+
+/* ===== AURORA WAVE ===== */
+.loader[data-variant="aurora"] svg path[data-element="wave"] {
+  animation: ab-aurora-shift 6s ease-in-out infinite;
+}
+.loader[data-variant="aurora"] svg path[data-wave="0"] { animation-delay: 0s; }
+.loader[data-variant="aurora"] svg path[data-wave="1"] { animation-delay: 0.4s; }
+.loader[data-variant="aurora"] svg path[data-wave="2"] { animation-delay: 0.8s; }
+.loader[data-variant="aurora"] svg path[data-wave="3"] { animation-delay: 1.2s; }
+@keyframes ab-aurora-shift {
+  0%, 100% { fill: var(--orange); filter: drop-shadow(0 0 0 transparent); }
+  20% { fill: var(--orange-light); filter: drop-shadow(0 0 8px rgba(228, 147, 72, 0.5)); }
+  40% { fill: var(--magenta-aurora); filter: drop-shadow(0 0 12px rgba(201, 53, 120, 0.6)); }
+  60% { fill: var(--violet-aurora); filter: drop-shadow(0 0 12px rgba(111, 76, 181, 0.6)); }
+  80% { fill: var(--cyan-aurora); filter: drop-shadow(0 0 10px rgba(61, 169, 211, 0.5)); }
+}
+.loader[data-variant="aurora"] svg path[data-element="seal"] {
+  animation: ab-aurora-seal 6s ease-in-out infinite;
+}
+@keyframes ab-aurora-seal {
+  0%, 100% { fill: var(--orange); opacity: 0.5; }
+  30% { fill: var(--magenta-aurora); opacity: 0.8; }
+  50% { fill: var(--violet-aurora); opacity: 1; }
+  70% { fill: var(--cyan-aurora); opacity: 0.8; }
+}
+.loader[data-variant="aurora"] .auroraGlow {
+  position: absolute; top: 50%; left: 50%;
+  width: 400px; height: 400px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    ellipse 60% 40% at 50% 50%,
+    rgba(201, 53, 120, 0.15),
+    rgba(111, 76, 181, 0.1) 30%,
+    rgba(61, 169, 211, 0.08) 60%,
+    transparent 80%
+  );
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: 1;
+  animation: ab-aurora-glow 6s ease-in-out infinite;
+}
+@keyframes ab-aurora-glow {
+  0%, 100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 0.6; }
+  33% { transform: translate(-50%, -50%) scale(1.2) rotate(120deg); opacity: 0.9; }
+  66% { transform: translate(-50%, -50%) scale(0.9) rotate(240deg); opacity: 0.7; }
+}
+
+/* ===== FIREFLIES ===== */
+.loader[data-variant="fireflies"] .fireflies {
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 2;
+}
+.loader[data-variant="fireflies"] .fireflies span {
+  position: absolute;
+  width: 6px; height: 6px;
+  background: radial-gradient(circle, #fff, var(--orange-light) 30%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(0.5px);
+  opacity: 0;
+  box-shadow: 0 0 8px var(--orange-light), 0 0 16px var(--orange-pale);
+}
+.loader[data-variant="fireflies"] .fireflies span:nth-child(1) { top: 20%; left: 15%; animation: ab-firefly-1 7s ease-in-out infinite 0s; }
+.loader[data-variant="fireflies"] .fireflies span:nth-child(2) { top: 70%; left: 80%; animation: ab-firefly-2 8s ease-in-out infinite 0.8s; }
+.loader[data-variant="fireflies"] .fireflies span:nth-child(3) { top: 35%; left: 75%; animation: ab-firefly-3 6.5s ease-in-out infinite 1.4s; }
+.loader[data-variant="fireflies"] .fireflies span:nth-child(4) { top: 65%; left: 25%; animation: ab-firefly-4 7.5s ease-in-out infinite 2.1s; }
+.loader[data-variant="fireflies"] .fireflies span:nth-child(5) { top: 85%; left: 50%; animation: ab-firefly-5 6s ease-in-out infinite 2.8s; }
+.loader[data-variant="fireflies"] .fireflies span:nth-child(6) { top: 15%; left: 60%; animation: ab-firefly-6 8.5s ease-in-out infinite 3.5s; }
+.loader[data-variant="fireflies"] .fireflies span:nth-child(7) { top: 50%; left: 12%; animation: ab-firefly-7 7s ease-in-out infinite 4s; }
+@keyframes ab-firefly-1 { 0%, 100% { transform: translate(0, 0) scale(0.5); opacity: 0; } 20% { transform: translate(20px, -30px) scale(1); opacity: 1; } 50% { transform: translate(-15px, 40px) scale(0.8); opacity: 0.7; } 80% { transform: translate(30px, 10px) scale(1); opacity: 0.9; } }
+@keyframes ab-firefly-2 { 0%, 100% { transform: translate(0, 0) scale(0.5); opacity: 0; } 25% { transform: translate(-30px, 20px) scale(1); opacity: 1; } 60% { transform: translate(20px, -40px) scale(0.7); opacity: 0.6; } 85% { transform: translate(-10px, -10px) scale(0.9); opacity: 0.8; } }
+@keyframes ab-firefly-3 { 0%, 100% { transform: translate(0, 0) scale(0.5); opacity: 0; } 30% { transform: translate(40px, 30px) scale(1.2); opacity: 1; } 55% { transform: translate(-20px, 50px) scale(0.7); opacity: 0.5; } 80% { transform: translate(-30px, -20px) scale(1); opacity: 0.9; } }
+@keyframes ab-firefly-4 { 0%, 100% { transform: translate(0, 0) scale(0.5); opacity: 0; } 20% { transform: translate(-25px, -40px) scale(1); opacity: 0.8; } 55% { transform: translate(35px, 20px) scale(1.1); opacity: 1; } 80% { transform: translate(10px, -25px) scale(0.7); opacity: 0.6; } }
+@keyframes ab-firefly-5 { 0%, 100% { transform: translate(0, 0) scale(0.5); opacity: 0; } 30% { transform: translate(50px, -20px) scale(1); opacity: 0.9; } 60% { transform: translate(-30px, -50px) scale(0.8); opacity: 0.6; } 85% { transform: translate(20px, -10px) scale(1.2); opacity: 1; } }
+@keyframes ab-firefly-6 { 0%, 100% { transform: translate(0, 0) scale(0.5); opacity: 0; } 25% { transform: translate(-40px, 50px) scale(1.1); opacity: 1; } 55% { transform: translate(20px, 30px) scale(0.8); opacity: 0.7; } 80% { transform: translate(-15px, -20px) scale(1); opacity: 0.9; } }
+@keyframes ab-firefly-7 { 0%, 100% { transform: translate(0, 0) scale(0.5); opacity: 0; } 20% { transform: translate(30px, 25px) scale(0.9); opacity: 0.8; } 60% { transform: translate(-20px, -35px) scale(1.1); opacity: 1; } 85% { transform: translate(40px, -15px) scale(0.8); opacity: 0.7; } }
+
+.loader[data-variant="fireflies"] svg path[data-element="wave"] {
+  animation: ab-firefly-glow 4s ease-in-out infinite;
+  filter: brightness(0.85);
+}
+.loader[data-variant="fireflies"] svg path[data-wave="0"] { animation-delay: 0s; }
+.loader[data-variant="fireflies"] svg path[data-wave="1"] { animation-delay: 0.7s; }
+.loader[data-variant="fireflies"] svg path[data-wave="2"] { animation-delay: 1.4s; }
+.loader[data-variant="fireflies"] svg path[data-wave="3"] { animation-delay: 2.1s; }
+@keyframes ab-firefly-glow {
+  0%, 100% { filter: brightness(0.85); }
+  50% { filter: brightness(1.4) drop-shadow(0 0 16px var(--orange-light)); }
+}
+.loader[data-variant="fireflies"] svg path[data-element="seal"] {
+  animation: ab-firefly-seal 4s ease-in-out infinite;
+}
+@keyframes ab-firefly-seal {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; filter: drop-shadow(0 0 12px var(--orange-light)); }
+}
+
+
+
+/* ============ ANIMATIONS (9 nouvelles) ============ */
+
+/* === FAN-SCAN === */
+/* ============ 02 · FAN SCAN - radar qui balaie */
+.loader[data-variant="fan-scan"] .visual {
+  position: relative;
+}
+.loader[data-variant="fan-scan"] .visual [data-element="wave"] {
+  opacity: 0.2;
+}
+.loader[data-variant="fan-scan"] .visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 270deg,
+    rgba(217, 120, 45, 0.4) 320deg,
+    var(--orange) 358deg,
+    rgba(217, 120, 45, 0.4) 359deg,
+    transparent 360deg
+  );
+  border-radius: 50%;
+  animation: ab-fan-scan-fan-rotate 1.5s linear infinite;
+  -webkit-mask-image: radial-gradient(circle, transparent 30%, #000 60%);
+  mask-image: radial-gradient(circle, transparent 30%, #000 60%);
+}
+.loader[data-variant="fan-scan"] .visual [data-element="wave"] {
+  animation: ab-fan-scan-fan-highlight 1.5s linear infinite;
+}
+.loader[data-variant="fan-scan"] .visual [data-wave="0"] { animation-delay: 0s; }
+.loader[data-variant="fan-scan"] .visual [data-wave="1"] { animation-delay: 0.1s; }
+.loader[data-variant="fan-scan"] .visual [data-wave="2"] { animation-delay: 0.2s; }
+.loader[data-variant="fan-scan"] .visual [data-wave="3"] { animation-delay: 0.3s; }
+
+@keyframes ab-fan-scan-fan-highlight {
+  0%, 80%, 100% { opacity: 0.2; }
+  20%, 30% { opacity: 1; }
+}
+@keyframes ab-fan-scan-fan-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* === LIVE === */
+/* ===== 06 · LIVE PULSE ===== */
+.loader[data-variant="live"] .logo svg path[data-element="wave"] { opacity: 1; }
+.loader[data-variant="live"] .logo svg path[data-element="seal"] { opacity: 0.5; }
+.loader[data-variant="live"] .logo svg path[data-element="text"] { opacity: 0.5; }
+.loader[data-variant="live"] .logo svg path[data-wave="0"] {
+  animation: ab-live-live-tic-1 3s cubic-bezier(0.3, 0, 0.2, 1) infinite;
+}
+.loader[data-variant="live"] .logo svg path[data-wave="1"] {
+  animation: ab-live-live-tic-2 4s cubic-bezier(0.3, 0, 0.2, 1) 1s infinite;
+}
+.loader[data-variant="live"] .logo svg path[data-wave="2"] {
+  animation: ab-live-live-tic-3 3.5s cubic-bezier(0.3, 0, 0.2, 1) 0.5s infinite;
+}
+.loader[data-variant="live"] .logo svg path[data-wave="3"] {
+  animation: ab-live-live-tic-4 4.5s cubic-bezier(0.3, 0, 0.2, 1) 1.8s infinite;
+}
+.loader[data-variant="live"] .logo svg path[data-element="seal"] {
+  animation: ab-live-live-tic-seal 3.2s cubic-bezier(0.3, 0, 0.2, 1) 0.3s infinite;
+}
+.loader[data-variant="live"] .logo {
+  animation: ab-live-live-breathe 6s ease-in-out infinite;
+}
+
+@keyframes ab-live-live-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+@keyframes ab-live-live-tic-4 {
+  0%, 65%, 100% { transform: translate(0,0); filter: none; }
+  68% { transform: translateY(-4px) scale(1.05); filter: drop-shadow(0 -4px 14px var(--orange)) brightness(1.35); }
+  74% { transform: translateY(2px) scale(1); }
+  78% { transform: translate(0, 0); filter: none; }
+}
+@keyframes ab-live-live-tic-3 {
+  0%, 50%, 100% { transform: translate(0,0); filter: none; }
+  53% { transform: translate(2px, 3px) scale(1.04); filter: drop-shadow(0 3px 10px var(--orange)) brightness(1.3); }
+  60% { transform: translate(-1px, -1px); }
+  64% { transform: translate(0, 0); filter: none; }
+}
+@keyframes ab-live-live-tic-seal {
+  0%, 70%, 100% { transform: scale(1); filter: none; opacity: 0.5; }
+  73% { transform: scale(1.12); filter: drop-shadow(0 0 16px var(--orange)) brightness(1.4); opacity: 1; }
+  80% { transform: scale(0.96); opacity: 0.7; }
+  85% { transform: scale(1); filter: none; opacity: 0.5; }
+}
+@keyframes ab-live-live-tic-1 {
+  0%, 60%, 100% { transform: translate(0,0) scale(1); filter: none; }
+  63% { transform: translate(-2px, -3px) scale(1.05); filter: drop-shadow(-3px 0 12px var(--orange)) brightness(1.3); }
+  68% { transform: translate(1px, 1px) scale(1); }
+  72% { transform: translate(0, 0); filter: none; }
+}
+@keyframes ab-live-live-tic-2 {
+  0%, 55%, 100% { transform: translate(0,0) scale(1); filter: none; }
+  58% { transform: translate(3px, -2px) scale(1.04); filter: drop-shadow(3px 0 10px var(--orange)) brightness(1.25); }
+  64% { transform: translate(-1px, 1px) scale(1); }
+  68% { transform: translate(0, 0); filter: none; }
+}
+
+/* === WATERCOLOR === */
+.loader[data-variant="watercolor"] { background: var(--washi); }
+[data-theme="dark"] .loader[data-variant="watercolor"] { background: #1a1610; }
+.loader[data-variant="watercolor"] .scene-tag,
+.scene[data-anim="seasons"] .scene-tag { color: rgba(15,20,30,0.5); }
+.loader[data-variant="watercolor"] .logo svg path[data-element="wave"] {
+  animation: ab-watercolor-watercolor-pulse 6s ease-in-out infinite;
+  mix-blend-mode: multiply;
+}
+.loader[data-variant="watercolor"] .logo svg path[data-wave="0"] { animation-delay: 0s; }
+.loader[data-variant="watercolor"] .logo svg path[data-wave="1"] { animation-delay: 0.3s; }
+.loader[data-variant="watercolor"] .logo svg path[data-wave="2"] { animation-delay: 0.6s; }
+.loader[data-variant="watercolor"] .logo svg path[data-wave="3"] { animation-delay: 0.9s; }
+.loader[data-variant="watercolor"] .logo svg path[data-element="seal"] {
+  animation: ab-watercolor-ab-watercolor-watercolor-pulse-seal 6s ease-in-out infinite;
+  mix-blend-mode: multiply;
+}
+/* ===== 02 · WATERCOLOR WASH ===== */
+.watercolorBg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  filter: blur(40px);
+}
+.watercolorBg span {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+}
+.watercolorBg span:nth-child(1) {
+  top: 15%; left: 10%;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, var(--orange-light), transparent 70%);
+  animation: ab-watercolor-watercolor-bloom 8s ease-in-out infinite 0s;
+}
+.watercolorBg span:nth-child(2) {
+  bottom: 10%; right: 15%;
+  width: 220px; height: 220px;
+  background: radial-gradient(circle, var(--pink-spring), transparent 70%);
+  animation: ab-watercolor-watercolor-bloom 8s ease-in-out infinite 2s;
+}
+.watercolorBg span:nth-child(3) {
+  top: 50%; right: 20%;
+  width: 180px; height: 180px;
+  background: radial-gradient(circle, var(--gold-summer), transparent 70%);
+  animation: ab-watercolor-watercolor-bloom 8s ease-in-out infinite 4s;
+}
+.watercolorBg span:nth-child(4) {
+  bottom: 30%; left: 25%;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, var(--amber-autumn), transparent 70%);
+  animation: ab-watercolor-watercolor-bloom 8s ease-in-out infinite 6s;
+}
+
+@keyframes ab-watercolor-watercolor-bloom {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  20% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.3); }
+  80% { opacity: 0.2; transform: scale(1.5); }
+}
+@keyframes ab-watercolor-watercolor-pulse-seal {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.85; }
+}
+@keyframes ab-watercolor-watercolor-pulse {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); filter: drop-shadow(0 0 8px rgba(217, 120, 45, 0.3)); }
+}
+
+/* === CONSTELLATION === */
+.loader[data-variant="constellation"] {
+  background: radial-gradient(ellipse at center, #1a1f3a, #0a0d20);
+}
+.loader[data-variant="constellation"] .logo svg path[data-element="wave"] {
+  animation: ab-constellation-constellation-wave 5s ease-in-out infinite;
+  filter: brightness(0.6);
+}
+.loader[data-variant="constellation"] .logo svg path[data-wave="0"] { animation-delay: 0s; }
+.loader[data-variant="constellation"] .logo svg path[data-wave="1"] { animation-delay: 0.3s; }
+.loader[data-variant="constellation"] .logo svg path[data-wave="2"] { animation-delay: 0.6s; }
+.loader[data-variant="constellation"] .logo svg path[data-wave="3"] { animation-delay: 0.9s; }
+.loader[data-variant="constellation"] .logo svg path[data-element="seal"] {
+  animation: ab-constellation-constellation-seal 5s ease-in-out infinite;
+}
+/* ===== 03 · CONSTELLATION ===== */
+.constellationStars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.constellationStars span {
+  position: absolute;
+  width: 3px; height: 3px;
+  background: #fff;
+  border-radius: 50%;
+  opacity: 0;
+  box-shadow: 0 0 4px #fff, 0 0 8px rgba(217, 120, 45, 0.7);
+}
+.constellationStars span:nth-child(1) { top: 25%; left: 30%; animation: ab-constellation-star-twinkle 5s ease-in-out infinite 0s; }
+.constellationStars span:nth-child(2) { top: 35%; left: 70%; animation: ab-constellation-star-twinkle 5s ease-in-out infinite 0.4s; }
+.constellationStars span:nth-child(3) { top: 50%; left: 50%; animation: ab-constellation-star-twinkle 5s ease-in-out infinite 0.8s; }
+.constellationStars span:nth-child(4) { top: 65%; left: 35%; animation: ab-constellation-star-twinkle 5s ease-in-out infinite 1.2s; }
+.constellationStars span:nth-child(5) { top: 70%; left: 65%; animation: ab-constellation-star-twinkle 5s ease-in-out infinite 1.6s; }
+.constellationStars span:nth-child(6) { top: 20%; left: 50%; animation: ab-constellation-star-twinkle 5s ease-in-out infinite 2s; }
+.constellationStars span:nth-child(7) { top: 80%; left: 50%; animation: ab-constellation-star-twinkle 5s ease-in-out infinite 2.4s; }
+.constellationStars span:nth-child(8) { top: 45%; left: 25%; animation: ab-constellation-star-twinkle 5s ease-in-out infinite 2.8s; }
+.constellationStars span:nth-child(9) { top: 55%; left: 75%; animation: ab-constellation-star-twinkle 5s ease-in-out infinite 3.2s; }
+.constellationLines {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 280px; height: 280px;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  animation: ab-constellation-constellation-show 5s ease-in-out infinite;
+}
+.constellationLines svg {
+  width: 100%; height: 100%;
+  stroke: rgba(217, 120, 45, 0.4);
+  stroke-width: 0.5;
+  fill: none;
+  stroke-dasharray: 2, 4;
+}
+
+@keyframes ab-constellation-star-twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  10% { opacity: 1; transform: scale(2); box-shadow: 0 0 8px #fff, 0 0 20px var(--orange); }
+  60% { opacity: 0.8; transform: scale(1); }
+  85% { opacity: 0.4; transform: scale(0.8); }
+}
+@keyframes ab-constellation-constellation-show {
+  0%, 100% { opacity: 0; }
+  40% { opacity: 0; }
+  55% { opacity: 0.8; }
+  85% { opacity: 0.6; }
+}
+@keyframes ab-constellation-constellation-wave {
+  0%, 100% { filter: brightness(0.5); opacity: 0.5; }
+  50% { filter: brightness(1.3) drop-shadow(0 0 12px var(--orange)); opacity: 1; }
+}
+@keyframes ab-constellation-constellation-seal {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; filter: drop-shadow(0 0 16px #fff) drop-shadow(0 0 24px var(--orange)); }
+}
+
+/* === EMBER === */
+.loader[data-variant="ember"] {
+  background: linear-gradient(180deg, #1a0d05 0%, #0a0503 100%);
+}
+.loader[data-variant="ember"] .logo svg path[data-element="wave"] {
+  animation: ab-ember-ember-warm 4s ease-in-out infinite;
+}
+.loader[data-variant="ember"] .logo svg path[data-wave="0"] { animation-delay: 0s; }
+.loader[data-variant="ember"] .logo svg path[data-wave="1"] { animation-delay: 0.3s; }
+.loader[data-variant="ember"] .logo svg path[data-wave="2"] { animation-delay: 0.6s; }
+.loader[data-variant="ember"] .logo svg path[data-wave="3"] { animation-delay: 0.9s; }
+.loader[data-variant="ember"] .logo svg path[data-element="seal"] {
+  animation: ab-ember-ab-ember-ember-warm-seal 4s ease-in-out infinite;
+}
+/* ============================================================ */
+/*                                                              */
+/*   ANIMATIONS PARTICULES                                      */
+/*                                                              */
+/* ============================================================ */
+
+/* ===== 01 · EMBER GLOW (braises qui montent) ===== */
+.embers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.embers span {
+  position: absolute;
+  width: 4px; height: 4px;
+  background: radial-gradient(circle, #fff, var(--ember-yellow) 30%, var(--ember-red) 70%, transparent);
+  border-radius: 50%;
+  opacity: 0;
+  filter: blur(0.5px);
+  box-shadow:
+    0 0 6px var(--ember-yellow),
+    0 0 12px var(--ember-red);
+  bottom: -10px;
+}
+.embers span:nth-child(1) { left: 15%; animation: ab-ember-ember-rise 5s ease-out infinite 0s; }
+.embers span:nth-child(2) { left: 25%; animation: ab-ember-ember-rise 6s ease-out infinite 0.8s; }
+.embers span:nth-child(3) { left: 35%; animation: ab-ember-ember-rise 5.5s ease-out infinite 1.5s; }
+.embers span:nth-child(4) { left: 50%; animation: ab-ember-ember-rise 5s ease-out infinite 2.2s; }
+.embers span:nth-child(5) { left: 60%; animation: ab-ember-ember-rise 6.2s ease-out infinite 2.8s; }
+.embers span:nth-child(6) { left: 70%; animation: ab-ember-ember-rise 5.5s ease-out infinite 3.5s; }
+.embers span:nth-child(7) { left: 80%; animation: ab-ember-ember-rise 5s ease-out infinite 4s; }
+.embers span:nth-child(8) { left: 85%; animation: ab-ember-ember-rise 6.5s ease-out infinite 4.5s; }
+.embers span:nth-child(9) { left: 20%; animation: ab-ember-ember-rise 5.8s ease-out infinite 1s; }
+.embers span:nth-child(10) { left: 75%; animation: ab-ember-ember-rise 6s ease-out infinite 3s; }
+/* Lueur de feu en bas */
+.emberFireGlow {
+  position: absolute;
+  bottom: -50%; left: 50%;
+  transform: translateX(-50%);
+  width: 80%; height: 100%;
+  background: radial-gradient(
+    ellipse at center top,
+    rgba(255, 107, 53, 0.4),
+    rgba(255, 184, 77, 0.2) 30%,
+    transparent 60%
+  );
+  filter: blur(30px);
+  z-index: 1;
+  animation: ab-ember-fire-flicker 3s ease-in-out infinite;
+}
+
+@keyframes ab-ember-ember-warm-seal {
+  0%, 100% { opacity: 0.4; filter: brightness(0.7); }
+  50% { opacity: 1; filter: brightness(1.5) drop-shadow(0 0 20px var(--ember-red)); }
+}
+@keyframes ab-ember-fire-flicker {
+  0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+}
+@keyframes ab-ember-ember-rise {
+  0% { bottom: -10px; opacity: 0; transform: translateX(0) scale(0.5); }
+  10% { opacity: 1; transform: translateX(0) scale(1.2); }
+  50% { opacity: 0.9; transform: translateX(20px) scale(1); }
+  80% { opacity: 0.5; transform: translateX(-10px) scale(0.8); }
+  100% { bottom: 110%; opacity: 0; transform: translateX(15px) scale(0.3); }
+}
+@keyframes ab-ember-ember-warm {
+  0%, 100% {
+    fill: var(--orange-deep);
+    filter: brightness(0.85);
+    opacity: 0.85;
+  }
+  50% {
+    fill: var(--ember-yellow);
+    filter: brightness(1.4) drop-shadow(0 0 16px var(--ember-red));
+    opacity: 1;
+  }
+}
+
+/* === RAIN === */
+.loader[data-variant="rain"] {
+  background: linear-gradient(180deg, var(--pond) 0%, #0a1622 100%);
+}
+.loader[data-variant="rain"] .logo svg path[data-element="wave"] {
+  animation: ab-rain-rain-shimmer 3s ease-in-out infinite;
+}
+.loader[data-variant="rain"] .logo svg path[data-wave="0"] { animation-delay: 0s; }
+.loader[data-variant="rain"] .logo svg path[data-wave="1"] { animation-delay: 0.2s; }
+.loader[data-variant="rain"] .logo svg path[data-wave="2"] { animation-delay: 0.4s; }
+.loader[data-variant="rain"] .logo svg path[data-wave="3"] { animation-delay: 0.6s; }
+.loader[data-variant="rain"] .logo svg path[data-element="seal"] {
+  animation: ab-rain-ab-rain-rain-shimmer-seal 3s ease-in-out infinite;
+}
+/* ===== 02 · RAIN ON POND ===== */
+.rainDrops {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.rainDrops span {
+  position: absolute;
+  width: 1.5px; height: 24px;
+  background: linear-gradient(180deg, transparent, rgba(91, 140, 190, 0.7), rgba(91, 140, 190, 0.9));
+  border-radius: 1px;
+  opacity: 0;
+  top: -30px;
+}
+.rainDrops span:nth-child(1) { left: 12%; animation: ab-rain-rain-fall 1.5s linear infinite 0s; }
+.rainDrops span:nth-child(2) { left: 28%; animation: ab-rain-rain-fall 1.8s linear infinite 0.3s; }
+.rainDrops span:nth-child(3) { left: 42%; animation: ab-rain-rain-fall 1.6s linear infinite 0.6s; }
+.rainDrops span:nth-child(4) { left: 55%; animation: ab-rain-rain-fall 1.4s linear infinite 0.9s; }
+.rainDrops span:nth-child(5) { left: 68%; animation: ab-rain-rain-fall 1.7s linear infinite 1.2s; }
+.rainDrops span:nth-child(6) { left: 82%; animation: ab-rain-rain-fall 1.5s linear infinite 0.2s; }
+.rainDrops span:nth-child(7) { left: 22%; animation: ab-rain-rain-fall 1.6s linear infinite 1.4s; }
+.rainDrops span:nth-child(8) { left: 75%; animation: ab-rain-rain-fall 1.3s linear infinite 0.5s; }
+.rainDrops span:nth-child(9) { left: 90%; animation: ab-rain-rain-fall 1.8s linear infinite 1s; }
+.rainDrops span:nth-child(10) { left: 5%; animation: ab-rain-rain-fall 1.6s linear infinite 0.8s; }
+/* Ondulations sur l'étang en bas */
+.pondRipples {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 50%;
+  pointer-events: none;
+  z-index: 1;
+}
+.pondRipples span {
+  position: absolute;
+  width: 30px; height: 30px;
+  border: 1px solid rgba(91, 140, 190, 0.5);
+  border-radius: 50%;
+  opacity: 0;
+}
+.pondRipples span:nth-child(1) {
+  bottom: 20%; left: 30%;
+  animation: ab-rain-ripple-spread 2s ease-out infinite 0.3s;
+}
+.pondRipples span:nth-child(2) {
+  bottom: 35%; left: 60%;
+  animation: ab-rain-ripple-spread 2.5s ease-out infinite 0.8s;
+}
+.pondRipples span:nth-child(3) {
+  bottom: 15%; left: 75%;
+  animation: ab-rain-ripple-spread 2.2s ease-out infinite 1.5s;
+}
+.pondRipples span:nth-child(4) {
+  bottom: 45%; left: 20%;
+  animation: ab-rain-ripple-spread 2.4s ease-out infinite 1s;
+}
+.pondRipples span:nth-child(5) {
+  bottom: 25%; left: 50%;
+  animation: ab-rain-ripple-spread 2s ease-out infinite 1.8s;
+}
+
+@keyframes ab-rain-rain-shimmer {
+  0%, 100% { opacity: 0.7; transform: scale(1); filter: brightness(0.85); }
+  50% { opacity: 1; transform: scale(1.02); filter: brightness(1.2) drop-shadow(0 0 8px rgba(91, 140, 190, 0.4)); }
+}
+@keyframes ab-rain-rain-shimmer-seal {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; filter: drop-shadow(0 0 10px rgba(91, 140, 190, 0.5)); }
+}
+@keyframes ab-rain-rain-fall {
+  0% { top: -30px; opacity: 0; }
+  10% { opacity: 1; }
+  85% { opacity: 1; }
+  95% { opacity: 0.5; }
+  100% { top: 105%; opacity: 0; }
+}
+@keyframes ab-rain-ripple-spread {
+  0% { transform: scale(0); opacity: 0; border-width: 2px; }
+  20% { opacity: 0.8; border-width: 1.5px; }
+  100% { transform: scale(4); opacity: 0; border-width: 0.5px; }
+}
+
+/* === LANTERN === */
+.loader[data-variant="lantern"] {
+  background: linear-gradient(180deg, var(--evening), #0a0820);
+}
+.loader[data-variant="lantern"] .logo svg path[data-element="wave"] {
+  animation: ab-lantern-lantern-warmth 5s ease-in-out infinite;
+}
+.loader[data-variant="lantern"] .logo svg path[data-wave="0"] { animation-delay: 0s; }
+.loader[data-variant="lantern"] .logo svg path[data-wave="1"] { animation-delay: 0.3s; }
+.loader[data-variant="lantern"] .logo svg path[data-wave="2"] { animation-delay: 0.6s; }
+.loader[data-variant="lantern"] .logo svg path[data-wave="3"] { animation-delay: 0.9s; }
+.loader[data-variant="lantern"] .logo svg path[data-element="seal"] {
+  animation: ab-lantern-ab-lantern-lantern-warmth-seal 5s ease-in-out infinite;
+}
+/* ===== 03 · PAPER LANTERNS ===== */
+.lanterns {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.lanterns span {
+  position: absolute;
+  width: 24px; height: 30px;
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    var(--lantern-glow),
+    var(--ember-red) 60%,
+    transparent 90%
+  );
+  border-radius: 50% 50% 45% 45%;
+  opacity: 0;
+  box-shadow:
+    0 0 12px rgba(255, 169, 89, 0.7),
+    0 0 24px rgba(255, 107, 53, 0.4);
+  filter: blur(0.5px);
+}
+.lanterns span::before {
+  content: '';
+  position: absolute;
+  top: -4px; left: 50%;
+  transform: translateX(-50%);
+  width: 1px; height: 4px;
+  background: rgba(255,255,255,0.4);
+}
+.lanterns span::after {
+  content: '';
+  position: absolute;
+  bottom: -3px; left: 50%;
+  transform: translateX(-50%);
+  width: 4px; height: 3px;
+  background: rgba(60, 30, 15, 0.5);
+  border-radius: 0 0 2px 2px;
+}
+.lanterns span:nth-child(1) {
+  bottom: -40px; left: 15%;
+  animation: ab-lantern-lantern-float 12s ease-in-out infinite 0s;
+}
+.lanterns span:nth-child(2) {
+  bottom: -40px; left: 35%;
+  animation: ab-lantern-lantern-float 14s ease-in-out infinite 2s;
+}
+.lanterns span:nth-child(3) {
+  bottom: -40px; left: 60%;
+  animation: ab-lantern-lantern-float 13s ease-in-out infinite 4s;
+}
+.lanterns span:nth-child(4) {
+  bottom: -40px; left: 80%;
+  animation: ab-lantern-lantern-float 15s ease-in-out infinite 6s;
+}
+.lanterns span:nth-child(5) {
+  bottom: -40px; left: 25%;
+  animation: ab-lantern-lantern-float 13s ease-in-out infinite 8s;
+}
+.lanterns span:nth-child(6) {
+  bottom: -40px; left: 70%;
+  animation: ab-lantern-lantern-float 14s ease-in-out infinite 10s;
+}
+/* Lueur globale chaude */
+.lanternGlowBg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 169, 89, 0.1) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+  z-index: 1;
+  animation: ab-lantern-lantern-bg-pulse 6s ease-in-out infinite;
+}
+
+@keyframes ab-lantern-lantern-float {
+  0% { bottom: -40px; opacity: 0; transform: translateX(0) scale(0.6); }
+  10% { opacity: 0.9; transform: translateX(0) scale(1); }
+  30% { transform: translateX(15px) scale(1); }
+  60% { transform: translateX(-10px) scale(1); }
+  85% { opacity: 0.5; transform: translateX(20px) scale(0.95); }
+  100% { bottom: 110%; opacity: 0; transform: translateX(0) scale(0.7); }
+}
+@keyframes ab-lantern-lantern-bg-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+@keyframes ab-lantern-lantern-warmth {
+  0%, 100% {
+    fill: var(--orange-deep);
+    filter: brightness(0.85);
+    opacity: 0.9;
+  }
+  50% {
+    fill: var(--lantern-glow);
+    filter: brightness(1.3) drop-shadow(0 0 14px var(--lantern-glow));
+    opacity: 1;
+  }
+}
+@keyframes ab-lantern-lantern-warmth-seal {
+  0%, 100% { opacity: 0.5; filter: brightness(0.8); }
+  50% { opacity: 1; filter: brightness(1.4) drop-shadow(0 0 16px var(--lantern-glow)); }
+}
+
+/* === INCENSE === */
+.loader[data-variant="incense"] {
+  background: linear-gradient(180deg, #2a2520 0%, #1a1610 100%);
+}
+.loader[data-variant="incense"] .logo svg path[data-element="wave"] {
+  animation: ab-incense-incense-glow 6s ease-in-out infinite;
+}
+.loader[data-variant="incense"] .logo svg path[data-wave="0"] { animation-delay: 0s; }
+.loader[data-variant="incense"] .logo svg path[data-wave="1"] { animation-delay: 0.3s; }
+.loader[data-variant="incense"] .logo svg path[data-wave="2"] { animation-delay: 0.6s; }
+.loader[data-variant="incense"] .logo svg path[data-wave="3"] { animation-delay: 0.9s; }
+.loader[data-variant="incense"] .logo svg path[data-element="seal"] {
+  animation: ab-incense-ab-incense-incense-glow-seal 6s ease-in-out infinite;
+}
+.loader[data-variant="incense"] .logo {
+  margin-bottom: 30px;
+}
+/* ===== 04 · INCENSE SPIRAL ===== */
+.incenseStick {
+  position: absolute;
+  bottom: 8%; left: 50%;
+  transform: translateX(-50%);
+  width: 2px; height: 40px;
+  background: linear-gradient(180deg, var(--ember-red) 0%, #1a0d05 30%);
+  z-index: 3;
+  border-radius: 1px;
+}
+.incenseStick::after {
+  content: '';
+  position: absolute;
+  top: -3px; left: 50%;
+  transform: translateX(-50%);
+  width: 4px; height: 4px;
+  background: radial-gradient(circle, #fff, var(--ember-yellow), var(--ember-red));
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--ember-yellow), 0 0 16px var(--ember-red);
+}
+.smokeTrails {
+  position: absolute;
+  bottom: 20%; left: 50%;
+  transform: translateX(-50%);
+  width: 80%; height: 70%;
+  pointer-events: none;
+  z-index: 2;
+}
+.smokeTrails span {
+  position: absolute;
+  width: 18px; height: 18px;
+  background: radial-gradient(circle, rgba(168, 168, 176, 0.5), rgba(168, 168, 176, 0.2) 50%, transparent 80%);
+  border-radius: 50%;
+  filter: blur(8px);
+  opacity: 0;
+  bottom: 0; left: 50%;
+}
+.smokeTrails span:nth-child(1) { animation: ab-incense-smoke-spiral 6s ease-out infinite 0s; }
+.smokeTrails span:nth-child(2) { animation: ab-incense-smoke-spiral 6s ease-out infinite 1s; }
+.smokeTrails span:nth-child(3) { animation: ab-incense-smoke-spiral 6s ease-out infinite 2s; }
+.smokeTrails span:nth-child(4) { animation: ab-incense-smoke-spiral 6s ease-out infinite 3s; }
+.smokeTrails span:nth-child(5) { animation: ab-incense-smoke-spiral 6s ease-out infinite 4s; }
+.smokeTrails span:nth-child(6) { animation: ab-incense-smoke-spiral 6s ease-out infinite 5s; }
+
+@keyframes ab-incense-incense-glow {
+  0%, 100% { opacity: 0.85; filter: brightness(0.9); }
+  50% { opacity: 1; filter: brightness(1.2) drop-shadow(0 0 8px rgba(217, 120, 45, 0.5)); }
+}
+@keyframes ab-incense-smoke-spiral {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.5);
+  }
+  10% {
+    opacity: 0.8;
+  }
+  30% {
+    transform: translate(-50%, -30%) scale(1.5) translateX(15px);
+    opacity: 0.7;
+  }
+  60% {
+    transform: translate(-50%, -60%) scale(2.5) translateX(-20px);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-50%, -90%) scale(4) translateX(10px);
+    opacity: 0;
+  }
+}
+@keyframes ab-incense-incense-glow-seal {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; filter: drop-shadow(0 0 10px rgba(255, 184, 77, 0.6)); }
+}
+
+/* === STARDUST === */
+.loader[data-variant="stardust"] {
+  background: radial-gradient(ellipse at center, #1a1530, var(--space));
+}
+.loader[data-variant="stardust"] .logo svg path[data-element="wave"] {
+  animation: ab-stardust-stardust-shimmer 5s ease-in-out infinite;
+}
+.loader[data-variant="stardust"] .logo svg path[data-wave="0"] { animation-delay: 0s; }
+.loader[data-variant="stardust"] .logo svg path[data-wave="1"] { animation-delay: 0.5s; }
+.loader[data-variant="stardust"] .logo svg path[data-wave="2"] { animation-delay: 1s; }
+.loader[data-variant="stardust"] .logo svg path[data-wave="3"] { animation-delay: 1.5s; }
+.loader[data-variant="stardust"] .logo svg path[data-element="seal"] {
+  animation: ab-stardust-ab-stardust-stardust-shimmer-seal 5s ease-in-out infinite;
+}
+/* ===== 05 · STARDUST TRAIL ===== */
+.stardust {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.stardust span {
+  position: absolute;
+  width: 2px; height: 2px;
+  background: #fff;
+  border-radius: 50%;
+  opacity: 0;
+  box-shadow: 0 0 4px #fff, 0 0 8px var(--stardust-purple);
+}
+.stardust span:nth-child(1) { top: 30%; left: -5%; animation: ab-stardust-stardust-trail 4s linear infinite 0s; }
+.stardust span:nth-child(2) { top: 50%; left: -5%; animation: ab-stardust-stardust-trail 5s linear infinite 0.8s; }
+.stardust span:nth-child(3) { top: 70%; left: -5%; animation: ab-stardust-stardust-trail 4.5s linear infinite 1.5s; }
+.stardust span:nth-child(4) { top: 20%; left: -5%; animation: ab-stardust-stardust-trail 5.5s linear infinite 2.2s; }
+.stardust span:nth-child(5) { top: 60%; left: -5%; animation: ab-stardust-stardust-trail 4s linear infinite 2.8s; }
+.stardust span:nth-child(6) { top: 40%; left: -5%; animation: ab-stardust-stardust-trail 5s linear infinite 3.5s; }
+.stardust span:nth-child(7) { top: 80%; left: -5%; animation: ab-stardust-stardust-trail 4.5s linear infinite 0.4s; }
+.stardust span:nth-child(8) { top: 25%; left: -5%; animation: ab-stardust-stardust-trail 5s linear infinite 1.2s; }
+/* Stars statiques en fond */
+.stardustBg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 15% 25%, #fff, transparent),
+    radial-gradient(1px 1px at 35% 65%, var(--stardust-purple), transparent),
+    radial-gradient(1.5px 1.5px at 60% 40%, #fff, transparent),
+    radial-gradient(1px 1px at 80% 75%, var(--stardust-cyan), transparent),
+    radial-gradient(1px 1px at 90% 30%, #fff, transparent),
+    radial-gradient(1px 1px at 25% 85%, var(--stardust-purple), transparent);
+  z-index: 1;
+  opacity: 0.7;
+  animation: ab-stardust-stardust-bg-twinkle 6s ease-in-out infinite;
+}
+/* Nébuleuse colorée en fond */
+.stardustNebula {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 30% at 30% 40%, rgba(155, 109, 214, 0.15), transparent 70%),
+    radial-gradient(ellipse 40% 30% at 70% 60%, rgba(92, 216, 232, 0.12), transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+  animation: ab-stardust-nebula-drift 12s ease-in-out infinite;
+}
+
+@keyframes ab-stardust-stardust-shimmer {
+  0%, 100% {
+    fill: var(--orange);
+    filter: brightness(0.85);
+  }
+  50% {
+    fill: var(--orange-light);
+    filter: brightness(1.4) drop-shadow(0 0 12px var(--stardust-purple)) drop-shadow(0 0 24px var(--stardust-cyan));
+  }
+}
+@keyframes ab-stardust-stardust-shimmer-seal {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; filter: drop-shadow(0 0 12px var(--stardust-purple)); }
+}
+@keyframes ab-stardust-stardust-trail {
+  0% { left: -5%; opacity: 0; transform: scale(0.5); }
+  10% { opacity: 1; transform: scale(2); box-shadow: 0 0 6px #fff, 0 0 16px var(--stardust-cyan); }
+  50% { transform: scale(1); box-shadow: 0 0 4px #fff, 0 0 12px var(--stardust-purple); }
+  90% { opacity: 0.5; }
+  100% { left: 110%; opacity: 0; transform: scale(0.3); }
+}
+@keyframes ab-stardust-nebula-drift {
+  0%, 100% { opacity: 0.6; transform: scale(1) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.1) rotate(5deg); }
+}
+@keyframes ab-stardust-stardust-bg-twinkle {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}`,
+  ts: `// components/AutobacsLoader/animations.ts
+
+export type AnimationId =
+  // Basiques
+  | 'pulse-wave'
+  | 'fan-scan'
+  | 'stagger'
+  // Style Magar
+  | 'sumi'
+  | 'calligraphy'
+  | 'fan'
+  | 'spiral'
+  | 'live'
+  // Élégantes
+  | 'aurora'
+  // Poétiques
+  | 'fireflies'
+  | 'watercolor'
+  | 'constellation'
+  // Particules
+  | 'ember'
+  | 'rain'
+  | 'lantern'
+  | 'incense'
+  | 'stardust';
+
+export type AnimationCategory =
+  | 'basic'
+  | 'magar'
+  | 'elegant'
+  | 'poetic'
+  | 'particles';
+
+export interface AnimationConfig {
+  id: AnimationId;
+  label: string;
+  /** Durée d'un cycle en ms */
+  duration: number;
+  /** Catégorie pour usage avancé */
+  category: AnimationCategory;
+  /** Overlays HTML supplémentaires nécessaires */
+  overlays?: Array<
+    | 'sumi-drop'
+    | 'spiral'
+    | 'aurora-glow'
+    | 'fireflies'
+    | 'watercolor'
+    | 'constellation-stars'
+    | 'embers'
+    | 'rain'
+    | 'lanterns'
+    | 'incense'
+    | 'stardust'
+  >;
+  /** Animation en loop infinie (déconseillée pour les vrais loaders) */
+  isInfiniteLoop?: boolean;
+}
+
+export const ANIMATIONS: AnimationConfig[] = [
+  // === Basiques ===
+  { id: 'pulse-wave', label: 'Pulse Wave', duration: 2000, category: 'basic' },
+  { id: 'fan-scan', label: 'Fan Scan', duration: 1500, category: 'basic' },
+  { id: 'stagger', label: 'Stagger Fade', duration: 1600, category: 'basic' },
+  // === Style Magar ===
+  { id: 'sumi', label: 'Sumi-e', duration: 4000, category: 'magar', overlays: ['sumi-drop'] },
+  { id: 'calligraphy', label: 'Calligraphy', duration: 4500, category: 'magar' },
+  { id: 'fan', label: 'Fan Fold', duration: 4000, category: 'magar' },
+  { id: 'spiral', label: 'Spiral Cut', duration: 3500, category: 'magar', overlays: ['spiral'] },
+  { id: 'live', label: 'Live Pulse', duration: 4000, category: 'magar', isInfiniteLoop: true },
+  // === Élégantes ===
+  { id: 'aurora', label: 'Aurora Wave', duration: 6000, category: 'elegant', overlays: ['aurora-glow'] },
+  // === Poétiques ===
+  { id: 'fireflies', label: 'Fireflies', duration: 7000, category: 'poetic', overlays: ['fireflies'] },
+  { id: 'watercolor', label: 'Watercolor Wash', duration: 8000, category: 'poetic', overlays: ['watercolor'] },
+  { id: 'constellation', label: 'Constellation', duration: 5000, category: 'poetic', overlays: ['constellation-stars'] },
+  // === Particules ===
+  { id: 'ember', label: 'Ember Glow', duration: 5000, category: 'particles', overlays: ['embers'] },
+  { id: 'rain', label: 'Rain on Pond', duration: 3000, category: 'particles', overlays: ['rain'] },
+  { id: 'lantern', label: 'Paper Lanterns', duration: 12000, category: 'particles', overlays: ['lanterns'] },
+  { id: 'incense', label: 'Incense Spiral', duration: 6000, category: 'particles', overlays: ['incense'] },
+  { id: 'stardust', label: 'Stardust Trail', duration: 5000, category: 'particles', overlays: ['stardust'] },
+];
+
+/**
+ * Récupérer toutes les animations d'une catégorie
+ */
+export function getAnimationsByCategory(category: AnimationCategory): AnimationConfig[] {
+  return ANIMATIONS.filter(a => a.category === category);
+}
+
+/**
+ * Récupérer une animation par son ID
+ */
+export function getAnimation(id: AnimationId): AnimationConfig | undefined {
+  return ANIMATIONS.find(a => a.id === id);
+}
+
+/**
+ * Pool par défaut : toutes sauf les loops infinies (inadapté aux loaders qui doivent se terminer)
+ */
+export const DEFAULT_POOL: AnimationId[] = ANIMATIONS
+  .filter(a => !a.isInfiniteLoop)
+  .map(a => a.id);
+`,
+  index: `// components/AutobacsLoader/index.ts
+
+export { AutobacsLoader } from './AutobacsLoader';
+export type { AutobacsLoaderProps } from './AutobacsLoader';
+export {
+  ANIMATIONS,
+  DEFAULT_POOL,
+  getAnimationsByCategory,
+  getAnimation,
+} from './animations';
+export type {
+  AnimationId,
+  AnimationCategory,
+  AnimationConfig,
+} from './animations';
+`,
+};
+
+// Theme toggle
+document.querySelectorAll('.theme-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.body.dataset.theme = btn.dataset.themeSet;
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.toggle('active', b === btn));
+  });
+});
+
+// Copy buttons
+document.querySelectorAll('.file-copy-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const fileKey = btn.dataset.copyFile;
+    const content = FILES[fileKey];
+    if (content) {
+      navigator.clipboard.writeText(content).then(() => {
+        btn.textContent = '✓ Copié dans le presse-papier';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copier le fichier';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+  });
+});
+</script>
+
+</body>
+</html>
