@@ -56,7 +56,7 @@
 
 .visual svg path[data-element="seal"],
 .visual svg path[data-element="text"] {
-  opacity: 0.5;
+  opacity: 1;
 }
 
 .message {
@@ -183,7 +183,7 @@
 }
 .autobacs-loader__visual svg path[data-element="seal"],
 .autobacs-loader__visual svg path[data-element="text"] {
-  opacity: 0.5;
+  opacity: 1;
 }
 
 /* ===== PULSE WAVE ===== */
@@ -243,14 +243,14 @@
 }
 @keyframes ab-sumi-seal {
   0% { opacity: 0; filter: blur(7px); transform: scale(0.5); }
-  35% { opacity: 0.7; filter: blur(0); transform: scale(1); }
-  90% { opacity: 0.7; }
+  35% { opacity: 1; filter: blur(0); transform: scale(1); }
+  90% { opacity: 1; }
   100% { opacity: 0; filter: blur(4px); }
 }
 @keyframes ab-sumi-text {
   0% { opacity: 0; filter: blur(7px); }
-  35% { opacity: 0.6; filter: blur(0); }
-  90% { opacity: 0.6; }
+  35% { opacity: 1; filter: blur(0); }
+  90% { opacity: 1; }
   100% { opacity: 0; }
 }
 .loader[data-variant="sumi"] .sumiDrop {
@@ -308,7 +308,7 @@
 }
 @keyframes ab-calli-emerge {
   0% { opacity: 0; transform: translateY(8px); }
-  20%, 80% { opacity: 0.6; transform: translateY(0); }
+  20%, 80% { opacity: 1; transform: translateY(0); }
   100% { opacity: 0; transform: translateY(-4px); }
 }
 
@@ -361,7 +361,7 @@
   85% { transform: rotateY(0deg) scaleX(1); filter: none; }
 }
 @keyframes ab-fan-seal {
-  0%, 100% { opacity: 0.5; transform: scale(1); }
+  0%, 100% { opacity: 1; transform: scale(1); }
   35%, 50% { opacity: 1; transform: scale(1.15); }
 }
 
@@ -390,14 +390,14 @@
 }
 @keyframes ab-spiral-seal {
   0% { opacity: 0; filter: brightness(5); }
-  10% { opacity: 0.85; filter: brightness(3); }
-  85% { opacity: 0.7; filter: none; }
+  10% { opacity: 1; filter: brightness(3); }
+  85% { opacity: 1; filter: none; }
   100% { opacity: 0; }
 }
 @keyframes ab-spiral-text {
   0% { opacity: 0; }
-  20% { opacity: 0.5; }
-  85% { opacity: 0.5; }
+  20% { opacity: 1; }
+  85% { opacity: 1; }
   100% { opacity: 0; }
 }
 .loader[data-variant="spiral"] .spiralHead {
@@ -462,10 +462,10 @@
   animation: ab-aurora-seal 6s ease-in-out infinite;
 }
 @keyframes ab-aurora-seal {
-  0%, 100% { fill: var(--orange); opacity: 0.5; }
-  30% { fill: var(--magenta-aurora); opacity: 0.8; }
+  0%, 100% { fill: var(--orange); opacity: 1; }
+  30% { fill: var(--magenta-aurora); opacity: 1; }
   50% { fill: var(--violet-aurora); opacity: 1; }
-  70% { fill: var(--cyan-aurora); opacity: 0.8; }
+  70% { fill: var(--cyan-aurora); opacity: 1; }
 }
 .loader[data-variant="aurora"] .auroraGlow {
   position: absolute; top: 50%; left: 50%;
@@ -534,7 +534,7 @@
   animation: ab-firefly-seal 4s ease-in-out infinite;
 }
 @keyframes ab-firefly-seal {
-  0%, 100% { opacity: 0.4; }
+  0%, 100% { opacity: 1; }
   50% { opacity: 1; filter: drop-shadow(0 0 12px var(--orange-light)); }
 }
 
